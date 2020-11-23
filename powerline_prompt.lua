@@ -75,13 +75,30 @@ local function init()
 	segment.text = " "..cwd.." "
 end 
 
+-- Register this addon with Clink
+local addAddonSegment = nil
+
 ---
 -- Uses the segment properties to add a new segment to the prompt
 ---
-local function addAddonSegment()
-    init()
-    addSegment(segment.text, segment.textColor, segment.fillColor)
-end 
+if not clink.version_major then
 
--- Register this addon with Clink
-clink.prompt.register_filter(addAddonSegment, 55)
+    -- Old Clink API (v0.4.x)
+    addAddonSegment = function ()
+        init()
+        addSegment(segment.text, segment.textColor, segment.fillColor)
+    end
+
+    clink.prompt.register_filter(addAddonSegment, 55)
+
+else
+
+    -- New Clink API (v1.x)
+    addAddonSegment = clink.promptfilter(55)
+
+    function addAddonSegment:filter(prompt)
+        init()
+        return addSegment(segment.text, segment.textColor, segment.fillColor)
+    end
+
+end

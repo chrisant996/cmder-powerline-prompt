@@ -209,7 +209,7 @@ end
 -- text {string} Text of the new segment to be added to the prompt.
 -- textColor {color} Foreground color of the new segment. Use one of the color constants as input.
 -- fillColor {color} Background color of the new segment. Use one of the color constants as input.
--- @return {nil} The prompt is reset with the new segments
+-- @return {string|nil} New Clink API: return prompt string; old Clink API: set clink.prompt.value.
 ---
 function addSegment(text, textColor, fillColor) 	
 	local newPrompt = ""
@@ -234,24 +234,34 @@ function addSegment(text, textColor, fillColor)
 	currentTextColor = textColor
 
 	-- Update clink prompt
-	clink.prompt.value = newPrompt
+	if clink.version_major then
+		return newPrompt
+	else
+		clink.prompt.value = newPrompt
+	end
 end 
 
 ---
 -- Resets the prompt and all state variables
 ---
-function resetPrompt()
-	clink.prompt.value = ""
-	currentSegments = ""
-	currentFillColor = colorBlue 
-	currentTextColor = colorWhite 
+resetPrompt = nil
+if not clink.version_major then
+	resetPrompt = function ()
+		clink.prompt.value = ""
+		currentSegments = ""
+		currentFillColor = colorBlue
+		currentTextColor = colorWhite
+	end
 end
 
 ---
 -- Closes the prompts with a new line and the lamb symbol
 ---
-function closePrompt() 
-	clink.prompt.value = clink.prompt.value..newLineSymbol..plc_prompt_lambSymbol.." "
+closePrompt = nil
+if not clink.version_major then
+	closePrompt = function ()
+		clink.prompt.value = clink.prompt.value..newLineSymbol..plc_prompt_lambSymbol.." "
+	end
 end
 
 ---
@@ -301,5 +311,39 @@ function get_git_dir(path)
 end
 
 -- Register filters for resetting the prompt and closing it before and after all addons
-clink.prompt.register_filter(resetPrompt, 51)
-clink.prompt.register_filter(closePrompt, 99)
+if not clink.version_major then
+
+	-- Old Clink API (v0.4.x)
+	clink.prompt.register_filter(resetPrompt, 51)
+	clink.prompt.register_filter(closePrompt, 99)
+
+else
+
+	-- New Clink API (v1.x)
+	resetPrompt = clink.promptfilter(51)
+	closePrompt = clink.promptfilter(99)
+
+	settings.add("powerline.newline", true, "Adds a newline and symbol to end of the prompt")
+
+	---
+	-- Resets the prompt and all state variables
+	---
+	function resetPrompt:filter(prompt)
+		currentSegments = ""
+		currentFillColor = colorBlue
+		currentTextColor = colorWhite
+		return ""
+	end
+
+	---
+	-- Closes the prompts with a new line and the lamb symbol
+	---
+	function closePrompt:filter(prompt)
+		if settings.get("powerline.newline") then
+			return prompt..newLineSymbol..plc_prompt_lambSymbol.." "
+		else
+			return prompt.." "
+		end
+	end
+
+end

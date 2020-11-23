@@ -112,15 +112,35 @@ local function init()
     end
 end 
 
+-- Register this addon with Clink
+local addAddonSegment = nil
+
 ---
 -- Uses the segment properties to add a new segment to the prompt
 ---
-local function addAddonSegment()
-    init()
-    for i = 1, #segments do
-        addSegment(segments[i][1], segments[i][2], segments[i][3])
-    end
-end 
+if not clink.version_major then
 
--- Register this addon with Clink
-clink.prompt.register_filter(addAddonSegment, 61)
+    -- Old Clink API (v0.4.x)
+    addAddonSegment = function ()
+        init()
+        for i = 1, #segments do
+            addSegment(segments[i][1], segments[i][2], segments[i][3])
+        end
+    end 
+
+    clink.prompt.register_filter(addAddonSegment, 61)
+
+else
+
+    -- New Clink API (v1.x)
+    addAddonSegment = clink.promptfilter(61)
+
+    function addAddonSegment:filter(prompt)
+        init()
+        for i = 1, #segments do
+            return addSegment(segments[i][1], segments[i][2], segments[i][3])
+        end
+        return prompt
+    end
+
+end
