@@ -144,7 +144,7 @@ currentTextColor = colorWhite.foreground
 
 -- Constants
 -- Symbols
-newLineSymbol = "\n"
+newLineSymbol = ansiEscChar.."[m\n"..ansiEscChar.."[m" -- first [m is so bg color is correct to eol, second [m is to reset after modmark color
 
 -- Default symbols
 -- Some symbols are required. If the user fails to provide them in the config file, they're created here
