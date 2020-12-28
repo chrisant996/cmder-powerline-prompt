@@ -20,6 +20,9 @@
 
 -- Behavior ------------------------------------------------------------------
 
+--- NOTE: If the original %PROMPT% string starts with $+ then the cwd segment
+--- will include the "+" signs corresponding to the pushd stack depth.
+
 --- REQUIRED. plc_prompt_type is whether the displayed prompt is the full path or only the folder name
  -- Use:
  -- "full" for full path like C:\Windows\System32

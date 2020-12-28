@@ -42,6 +42,24 @@ local segment = {
 }
 
 ---
+-- If the prompt envvar has $+ at the beginning of any line then this
+-- captures the pushd stack depth.  Also if the translated prompt has + at
+-- the beginning of any line then that will be (mis?)interpreted as the
+-- pushd stack depth.
+---
+local dirStackDepth = ""
+local function extract_pushd_depth(prompt)
+	dirStackDepth = ""
+	local plusBegin, plusEnd = prompt:find("^[+]+")
+	if plusBegin == nil then
+		plusBegin, plusEnd = prompt:find("[\n][+]+")
+	end
+	if plusBegin ~= nil then
+		dirStackDepth = prompt:sub(plusBegin, plusEnd).." "
+	end
+end
+
+---
 -- Sets the properties of the Segment object, and prepares for a segment to be added
 ---
 local function init()
@@ -78,7 +96,7 @@ local function init()
         end
     end
 
-	segment.text = " "..cwd.." "
+	segment.text = " "..dirStackDepth..cwd.." "
 end
 
 -- Register this addon with Clink
@@ -89,22 +107,29 @@ local addAddonSegment = nil
 ---
 if not clink.version_major then
 
-    -- Old Clink API (v0.4.x)
-    addAddonSegment = function ()
-        init()
-        addSegment(segment.text, segment.textColor, segment.fillColor)
-    end
+	-- Old Clink API (v0.4.x)
 
-    clink.prompt.register_filter(addAddonSegment, 55)
+	addAddonSegment = function ()
+		init()
+		addSegment(segment.text, segment.textColor, segment.fillColor)
+	end
+	clink.prompt.register_filter(addAddonSegment, 55)
+
+	clink.prompt.register_filter(function() extract_pushd_depth(clink.prompt.value) end, 1)
 
 else
 
-    -- New Clink API (v1.x)
-    addAddonSegment = clink.promptfilter(55)
+	-- New Clink API (v1.x)
 
-    function addAddonSegment:filter(prompt)
-        init()
-        return addSegment(segment.text, segment.textColor, segment.fillColor)
-    end
+	addAddonSegment = clink.promptfilter(55)
+	function addAddonSegment:filter(prompt)
+		init()
+		return addSegment(segment.text, segment.textColor, segment.fillColor)
+	end
+
+	local plus_capture = clink.promptfilter(1)
+	function plus_capture:filter(prompt)
+		extract_pushd_depth(prompt)
+	end
 
 end
