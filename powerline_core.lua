@@ -330,8 +330,6 @@ else
 	resetPrompt = clink.promptfilter(51)
 	closePrompt = clink.promptfilter(99)
 
-	settings.add("powerline.newline", true, "Adds a newline and symbol to end of the prompt")
-
 	---
 	-- Resets the prompt and all state variables
 	---
@@ -346,7 +344,7 @@ else
 	-- Closes the prompts with a new line and the lamb symbol
 	---
 	function closePrompt:filter(prompt)
-		if settings.get("powerline.newline") then
+		if plc_prompt_useLambSymbol then
 			return prompt..newLineSymbol..plc_prompt_lambSymbol.." "
 		else
 			return prompt.." "

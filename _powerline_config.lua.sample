@@ -33,12 +33,17 @@ plc_prompt_type = "smart"
  -- default is true
 plc_prompt_useHomeSymbol = true
 
---- OPTIONAL. Whether to show the date on a separate line.
+--- OPTIONAL. plc_prompt_useLambSymbol is whether to add plc_prompt_lambSymbol on a new line under the prompt.
+ -- Use true or false (or nil)
+ -- default is true
+plc_prompt_useLambSymbol = true
+
+--- OPTIONAL. Whether to show the date.
  -- Use:
- -- "left" for leftmost segment
- -- "right" for rightmost segment
- -- "above" to put the date on a separate line above the powerline prompt
- -- or nil for no date
+ -- "above" to show the date in a separate line above the powerline prompt
+ -- "left" to show the date in a leftmost segment
+ -- "right" to show the date in a rightmost segment
+ -- or use nil for no date
  -- default is nil
 plc_date_position = nil
 
