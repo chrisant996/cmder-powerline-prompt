@@ -31,22 +31,37 @@ plc_prompt_type = "smart"
 --- REQUIRED. plc_prompt_useHomeSymbol is whether to show ~ instead of the full path to the user's home folder
  -- Use true or false
  -- default is true
-plc_prompt_useHomeSymbol = true  
+plc_prompt_useHomeSymbol = true
+
+--- OPTIONAL. Whether to show the date on a separate line.
+ -- Use:
+ -- "left" for leftmost segment
+ -- "right" for rightmost segment
+ -- "above" to put the date on a separate line above the powerline prompt
+ -- or nil for no date
+ -- default is nil
+plc_date_position = nil
+
+--- OPTIONAL. The date format to use.
+ -- Refer to https://www.lua.org/pil/22.1.html for references
+ -- default is "%a %x  %X" when plc_date_position is "above"
+ -- default is "%a %H:%M" when plc_date_position is "left" or "right"
+--plc_date_format = "%A %B %d, %Y  %I:%M %p"
 
 --- OPTIONAL. Whether to show detailed operation counts in the git prompt.
- -- Use true or false or nil
- -- default is nil
---plc_git_status_details = true
+ -- Use true or false (or nil)
+ -- default is false
+plc_git_status_details = false
 
 --- OPTIONAL. Whether to include summary of staged files. This is usually fast.
- -- Use true or false or nil
+ -- Use true or false (or nil)
  -- default is true
 plc_git_staged = true
 
 --- OPTIONAL. Whether to include summary of ahead/behind commits. This can take some time to compute.
- -- Use true or false or nil
- -- default is nil
---plc_git_aheadbehind = true
+ -- Use true or false (or nil)
+ -- default is false
+plc_git_aheadbehind = false
 
 
 -- Symbols -------------------------------------------------------------------
@@ -66,10 +81,24 @@ plc_git_branchSymbol = ""
 -- REQUIRED. Version control (e.g. Git) conflict symbol. Used to indicate there's a conflict.
 plc_git_conflictSymbol = "!"
 
--- OPTIONAL. Symbol for ahead/behind segment.
+-- REQUIRED. Symbols for git local status.
+plc_git_addcountSymbol = "+"
+plc_git_modifycountSymbol = "*"
+plc_git_deletecountSymbol = "-"
+plc_git_renamecountSymbol = "🎃"
+plc_git_summarycountSymbol = "±"
+plc_git_untrackedcountSymbol = "?"
+
+-- OPTIONAL. Symbol for git ahead/behind segment.
 plc_git_aheadbehindSymbol = "☁"
 
--- OPTIONAL. Symbol for staged segment.
+-- REQUIRED. Symbol for git ahead commit count.
+plc_git_aheadcountSymbol = "↓"
+
+-- REQUIRED. Symbol for git behind commit count.
+plc_git_behindcountSymbol = "↑"
+
+-- OPTIONAL. Symbol for git staged segment.
 plc_git_stagedSymbol = "↗"
 
 -- OPTIONAL. Git symbol used in the folder segment when 'smart' prompt is used and the user navigates to a folder with Git repo

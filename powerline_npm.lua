@@ -50,12 +50,12 @@ local function init()
     end
 
     if plc_npm_npmSymbol then
-      segment.text = " "..npmSymbol.." "..package_name.."@"..package_version.." "
+      segment.text = " "..plc_npm_npmSymbol.." "..package_name.."@"..package_version.." "
     else
       segment.text = " "..package_name.."@"..package_version.." "
-    end 
+    end
   end
-end 
+end
 
 -- Register this addon with Clink
 local addAddonSegment = nil

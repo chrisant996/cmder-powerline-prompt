@@ -5,16 +5,16 @@
 local promptTypeFull = "full"
  -- "folder" for folder name only like System32
 local promptTypeFolder = "folder"
- -- "smart" to switch in git repo to folder name instead of full path 
+ -- "smart" to switch in git repo to folder name instead of full path
 local promptTypeSmart = "smart"
 
- -- default is promptTypeFull
+ -- default is promptTypeSmart
  -- Set default value if no value is already set
 if not plc_prompt_type then
-    plc_prompt_type = promptTypeFull
-end 
-if not plc_prompt_useHomeSymbol then 
-	plc_prompt_useHomeSymbol = true 
+    plc_prompt_type = promptTypeSmart
+end
+if not plc_prompt_useHomeSymbol then
+	plc_prompt_useHomeSymbol = true
 end
 if not plc_prompt_homeSymbolEnvironment then
     plc_prompt_homeSymbolEnvironment = "HOME"
@@ -37,7 +37,7 @@ end
 local segment = {
     isNeeded = true,
     text = "",
-    textColor = colorWhite, 
+    textColor = colorWhite,
     fillColor = colorBlue
 }
 

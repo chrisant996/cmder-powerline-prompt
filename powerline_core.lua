@@ -149,9 +149,9 @@ newLineSymbol = "\n"..ansiEscChar.."[m" -- ESC[m is needed when colour.input is 
 -- Default symbols
 -- Some symbols are required. If the user fails to provide them in the config file, they're created here
 -- Prompt displayed instead of user's home folder e.g. C:\Users\username
-if not plc_prompt_homeSymbol then 
+if not plc_prompt_homeSymbol then
 	plc_prompt_homeSymbol = "~"
-end 
+end
 -- Symbol connecting each segment of the prompt. Be careful before you change this.
 if not plc_prompt_arrowSymbol then
 	plc_prompt_arrowSymbol = ""
@@ -163,7 +163,7 @@ end
 -- Version control (e.g. Git) branch symbol. Used to indicate the name of a branch.
 if not plc_git_branchSymbol then
 	plc_git_branchSymbol = ""
-end 
+end
 -- Version control (e.g. Git) conflict symbol. Used to indicate there's a conflict.
 if not plc_git_conflictSymbol then
 	plc_git_conflictSymbol = "!"
@@ -186,7 +186,7 @@ function addArrow(text, oldColor, newColor)
 	-- An arrow is a character written using the old color on a background of the new color
 	text = addTextWithColor(text, plc_prompt_arrowSymbol, oldColor.foreground, newColor.background)
 	return text
-end 
+end
 
 ---
 -- Adds text to the input text with the correct colors
@@ -197,7 +197,7 @@ end
 -- @return {string} concatination of the the two input text with the correct color formatting.
 ---
 function addTextWithColor(text, textToAdd, textColorValue, fillColorValue)
-	-- let's say the 
+	-- let's say the
 	-- fillColorValue is 41
 	-- textColorValue is 30
 	-- textToAdd is "Hello"
@@ -205,8 +205,8 @@ function addTextWithColor(text, textToAdd, textColorValue, fillColorValue)
 	-- which add Hello with red background and black letters
 	-- [0m at the end turns off all attributes
 	text = text..ansiEscChar.."["..textColorValue..";"..fillColorValue.."m"..textToAdd..ansiEscChar.."[0m"
-	return text 
-end 
+	return text
+end
 
 ---
 -- Adds a new segment to the prompt with the specified colors.
@@ -215,18 +215,18 @@ end
 -- fillColor {color} Background color of the new segment. Use one of the color constants as input.
 -- @return {string|nil} New Clink API: return prompt string; old Clink API: set clink.prompt.value.
 ---
-function addSegment(text, textColor, fillColor) 	
+function addSegment(text, textColor, fillColor)
 	local newPrompt = ""
 	-- If there's an existing segment
-	if currentSegments == "" then 
+	if currentSegments == "" then
 		newPrompt = ""
-	else 
-		-- Remove the existing arrow 
+	else
+		-- Remove the existing arrow
 		-- The last arrow with all its surrounding escape characters and graphics mode settings count as 7 characters
 		newPrompt = string.sub(currentSegments, 0, string.len(currentSegments) - 7)
 		-- Add arrow with color of new segment
 		newPrompt = addArrow(newPrompt, currentFillColor, fillColor)
-	end 
+	end
 	-- Write the text with the fill color
 	newPrompt = addTextWithColor(newPrompt, text, textColor.foreground, fillColor.background)
 	-- Write the closing arrow
