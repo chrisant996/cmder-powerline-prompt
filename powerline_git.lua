@@ -2,7 +2,7 @@
 local segmentColors = {
     clean = {
         fill = colorGreen,
-        text = colorWhite
+        text = colorBlack
     },
     dirty = {
         fill = colorYellow,
@@ -10,7 +10,15 @@ local segmentColors = {
     },
     conflict = {
         fill = colorRed,
-        text = colorWhite
+        text = colorBrightWhite
+    },
+    staged = {
+        fill = colorMagenta,
+        text = colorBlack
+    },
+    remote = {
+        fill = colorCyan,
+        text = colorBlack
     }
 }
 
@@ -37,26 +45,79 @@ function get_git_branch(git_dir)
 end
 
 ---
--- Gets the .git directory
--- copied from clink.lua
--- clink.lua is saved under %CMDER_ROOT%\vendor
--- @return {bool} indicating there's a git directory or not
----
--- function get_git_dir(path)
--- MOVED INTO CORE
-
----
 -- Gets the status of working dir
--- @return {bool} indicating true for clean, false for dirty
+-- @return nil for clean, or a table with dirty counts.
 ---
 function get_git_status()
     local file = io.popen("git --no-optional-locks status --porcelain 2>nul")
+    local w_add, w_mod, w_del, w_unt = 0, 0, 0, 0
+    local s_add, s_mod, s_del, s_ren = 0, 0, 0, 0
+
     for line in file:lines() do
-        file:close()
-        return false
+        local kindStaged, kind = string.match(line, "(.)(.) ")
+
+        if kind == "A" then
+            w_add = w_add + 1
+        elseif kind == "M" then
+            w_mod = w_mod + 1
+        elseif kind == "D" then
+            w_del = w_del + 1
+        elseif kind == "?" then
+            w_unt = w_unt + 1
+        end
+
+        if kindStaged == "A" then
+            s_add = s_add + 1
+        elseif kindStaged == "M" then
+            s_mod = s_mod + 1
+        elseif kindStaged == "D" then
+            s_del = s_del + 1
+        elseif kindStaged == "R" then
+            s_ren = s_ren + 1
+        end
     end
     file:close()
-    return true
+
+    local working
+    local staged
+
+    if w_add + w_mod + w_del + w_unt > 0 then
+        working = {}
+        working.add = w_add
+        working.modify = w_mod
+        working.delete = w_del
+        working.untracked = w_unt
+    end
+
+    if s_add + s_mod + s_del + s_ren > 0 then
+        staged = {}
+        staged.add = s_add
+        staged.modify = s_mod
+        staged.delete = s_del
+        staged.rename = s_ren
+    end
+
+    local status
+    if working or staged then
+        status = {}
+        status.working = working
+        status.staged = staged
+    end
+    return status
+end
+
+---
+-- Gets the number of commits ahead/behind from upstream.
+---
+function git_ahead_behind_module()
+    local file = io.popen("git rev-list --count --left-right @{upstream}...HEAD 2>nul")
+    local ahead, behind = "0", "0"
+    for line in file:lines() do
+        ahead, behind = string.match(line, "(%d+).+(%d+)")
+    end
+    file:close()
+
+    return ahead, behind
 end
 
 ---
@@ -73,55 +134,122 @@ function get_git_conflict()
     return false
 end
 
--- * Segment object with these properties:
----- * isNeeded: sepcifies whether a segment should be added or not. For example: no Git segment is needed in a non-git folder
----- * text
+-- * Table of segment objects with these properties:
+---- * text:      Text to show.
 ---- * textColor: Use one of the color constants. Ex: colorWhite
 ---- * fillColor: Use one of the color constants. Ex: colorBlue
-local segment = {
-    isNeeded = false,
-    text = "",
-    textColor = 0,
-    fillColor = 0
-}
+local segments = {}
 
 ---
--- Sets the properties of the Segment object, and prepares for a segment to be added
+-- Add status details to the segment text.
+-- Depending on plc_git_status_details this may show verbose counts for
+-- operations, or a concise overall count.
+---
+local function add_details(text, details)
+    if plc_git_status_details then
+        if details.add > 0 then
+            text = text..plc_git_addcountSymbol..details.add.." "
+        end
+        if details.modify > 0 then
+            text = text..plc_git_modifycountSymbol..details.modify.." "
+        end
+        if details.delete > 0 then
+            text = text..plc_git_deletecountSymbol..details.delete.." "
+        end
+        if (details.rename or 0) > 0 then
+            text = text..plc_git_renamecountSymbol..details.rename.." "
+        end
+    else
+        text = text..plc_git_summarycountSymbol..(details.add + details.modify + details.delete + (details.rename or 0)).." "
+    end
+    if (details.untracked or 0) > 0 then
+        text = text..plc_git_untrackedcountSymbol..details.untracked.." "
+    end
+    return text
+end
+
+---
+-- Builds the segments table.
 ---
 local function init()
-    segment.isNeeded = get_git_dir()    
-    if segment.isNeeded then
-        -- if we're inside of git repo then try to detect current branch
-        local branch = get_git_branch(git_dir)
-        if branch then
-            -- Has branch => therefore it is a git folder, now figure out status
-            local gitStatus = get_git_status()
-            local gitConflict = get_git_conflict()
-            segment.text = " "..plc_git_branchSymbol.." "..branch.." "
+    if not get_git_dir() then
+        return {}
+    end
 
+    local branch = get_git_branch(git_dir)
+    if not branch then
+        return {}
+    end
 
-            if gitConflict then
-                segment.textColor = segmentColors.conflict.text
-                segment.fillColor = segmentColors.conflict.fill
-                if plc_git_conflictSymbol then
-                    segment.text = segment.text..plc_git_conflictSymbol
-                end 
-                return
-            end 
+    local segment
+    local segments = {}
 
-            if gitStatus then
-                segment.textColor = segmentColors.clean.text
-                segment.fillColor = segmentColors.clean.fill
-                segment.text = segment.text..""
-                return
+    -- Local status
+    local gitStatus = get_git_status()
+    local gitConflict = get_git_conflict()
+    segment = {}
+    segment.text = " "..plc_git_branchSymbol.." "..branch.." "
+    segment.textColor = segmentColors.clean.text
+    segment.fillColor = segmentColors.clean.fill
+    if gitConflict then
+        segment.textColor = segmentColors.conflict.text
+        segment.fillColor = segmentColors.conflict.fill
+        if plc_git_conflictSymbol and #plc_git_conflictSymbol then
+            segment.text = segment.text..plc_git_conflictSymbol.." "
+        end
+    elseif gitStatus and gitStatus.working then
+        segment.textColor = segmentColors.dirty.text
+        segment.fillColor = segmentColors.dirty.fill
+        segment.text = add_details(segment.text, gitStatus.working)
+    end
+    table.insert(segments, segment)
+
+    -- Staged status
+    if plc_git_staged and gitStatus and gitStatus.staged then
+        segment = {}
+        segment.text = " "
+        if plc_git_stagedSymbol and #plc_git_stagedSymbol then
+            segment.text = segment.text..plc_git_stagedSymbol.." "
+        end
+        segment.textColor = segmentColors.staged.text
+        segment.fillColor = segmentColors.staged.fill
+        segment.text = add_details(segment.text, gitStatus.staged)
+        table.insert(segments, segment)
+    end
+
+    -- Remote status (ahead/behind)
+    if plc_git_aheadbehind then
+        local ahead,behind = git_ahead_behind_module()
+        if ahead ~= "0" or behind ~= "0" then
+            segment = {}
+            segment.text = " "
+            if plc_git_aheadbehindSymbol and #plc_git_aheadbehindSymbol then
+                segment.text = segment.text..plc_git_aheadbehindSymbol.." "
             end
-
-            segment.textColor = segmentColors.dirty.text
-            segment.fillColor = segmentColors.dirty.fill
-            segment.text = segment.text.."± "
+            segment.textColor = segmentColors.remote.text
+            segment.fillColor = segmentColors.remote.fill
+            if ahead ~= "0" then
+                segment.text = segment.text..plc_git_aheadcountSymbol..ahead.." "
+            end
+            if behind ~= "0" then
+                segment.text = segment.text..plc_git_behindcountSymbol..behind.." "
+            end
+            table.insert(segments, segment)
         end
     end
-end 
+
+    return segments
+end
+
+---
+-- Builds the prompt.
+---
+local function build_prompt(prompt)
+    for _,seg in ipairs(init()) do
+        prompt = addSegment(seg.text, seg.textColor, seg.fillColor)
+    end
+    return prompt
+end
 
 -- Register this addon with Clink
 local addAddonSegment = nil
@@ -133,10 +261,7 @@ if not clink.version_major then
 
     -- Old Clink API (v0.4.x)
     addAddonSegment = function ()
-        init()
-        if segment.isNeeded then
-            addSegment(segment.text, segment.textColor, segment.fillColor)
-        end
+        build_prompt()
     end
 
     clink.prompt.register_filter(addAddonSegment, 61)
@@ -147,11 +272,7 @@ else
     addAddonSegment = clink.promptfilter(61)
 
     function addAddonSegment:filter(prompt)
-        init()
-        if segment.isNeeded then
-            return addSegment(segment.text, segment.textColor, segment.fillColor)
-        end
-        return prompt
+        return build_prompt(prompt)
     end
 
 end

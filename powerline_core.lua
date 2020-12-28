@@ -168,6 +168,10 @@ end
 if not plc_git_conflictSymbol then
 	plc_git_conflictSymbol = "!"
 end
+-- Version control (e.g. Hg) changes symbol. Used to indicate there's a change.
+if not plc_hg_changesSymbol then
+	plc_hg_changesSymbol = ""
+end
 
 ---
 -- Adds an arrow symbol to the input text with the correct colors
@@ -294,7 +298,10 @@ function get_git_dir(path)
 			local git_dir = gitfile:read():match('gitdir: (.*)')
 			gitfile:close()
 
-			return git_dir and dir..'/'..git_dir
+			-- gitdir can (apparently) be absolute or relative:
+			local file_when_absolute = git_dir and clink.is_dir(git_dir) and git_dir
+			local file_when_relative = git_dir and clink.is_dir(dir..'/'..git_dir) and dir..'/'..git_dir
+			return (file_when_absolute or file_when_relative)
 	end
 
 	-- Set default path to current directory

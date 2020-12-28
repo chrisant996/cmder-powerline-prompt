@@ -16,6 +16,9 @@ end
 if not plc_prompt_useHomeSymbol then 
 	plc_prompt_useHomeSymbol = true 
 end
+if not plc_prompt_homeSymbolEnvironment then
+    plc_prompt_homeSymbolEnvironment = "HOME"
+end
 
 -- Extracts only the folder name from the input Path
 -- Ex: Input C:\Windows\System32 returns System32
@@ -48,31 +51,35 @@ local function init()
     -- show just current folder
     if plc_prompt_type == promptTypeFolder then
 		cwd =  get_folder_name(cwd)
-    else    
+    else
     -- show 'smart' folder name
     -- This will show the full folder path unless a Git repo is active in the folder
     -- If a Git repo is active, it will only show the folder name
     -- This helps users avoid having a super long prompt
         local git_dir = get_git_dir()
-        if plc_prompt_useHomeSymbol and string.find(cwd, clink.get_env("HOME")) and git_dir ==nil then 
+        if plc_prompt_useHomeSymbol and string.find(cwd, clink.get_env(plc_prompt_homeSymbolEnvironment)) and git_dir ==nil then
             -- in both smart and full if we are in home, behave like a proper command line
-            cwd = string.gsub(cwd, clink.get_env("HOME"), plc_prompt_homeSymbol)
-        else 
+            cwd = string.gsub(cwd, clink.get_env(plc_prompt_homeSymbolEnvironment), plc_prompt_homeSymbol)
+        else
             -- either not in home or home not supported then check the smart path
             if plc_prompt_type == promptTypeSmart then
                 if git_dir then
-                    cwd = get_folder_name(cwd)
-                    if plc_npm_gitSymbol then
-                        cwd = gitSymbol.." "..cwd
+                    -- get the root git folder name and reappend any part of the directory that comes after
+                    -- Ex: C:\Users\username\cmder-powerline-prompt\innerdir -> cmder-powerline-prompt\innerdir
+                    local git_root_dir = git_dir:gsub("/.git", "")
+                    local appended_dir = string.sub(cwd, string.len(git_root_dir) + 1)
+                    cwd = get_folder_name(git_root_dir)..appended_dir
+                    if plc_prompt_gitSymbol then
+                        cwd = plc_prompt_gitSymbol.." "..cwd
                     end
                 end
                 -- if not git dir leave the full path
             end
         end
     end
-	
+
 	segment.text = " "..cwd.." "
-end 
+end
 
 -- Register this addon with Clink
 local addAddonSegment = nil
