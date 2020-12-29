@@ -149,29 +149,56 @@ newLineSymbol = "\n"..ansiEscChar.."[m" -- ESC[m is needed when colour.input is 
 -- Default symbols
 -- Some symbols are required. If the user fails to provide them in the config file, they're created here
 -- Prompt displayed instead of user's home folder e.g. C:\Users\username
-if not plc_prompt_homeSymbol then
-	plc_prompt_homeSymbol = "~"
-end
+plc_prompt_homeSymbol = plc_prompt_homeSymbol or "~"
 -- Symbol connecting each segment of the prompt. Be careful before you change this.
-if not plc_prompt_arrowSymbol then
-	plc_prompt_arrowSymbol = ""
-end
+plc_prompt_arrowSymbol = plc_prompt_arrowSymbol or ""
 -- Symbol displayed in the new line below the prompt.
-if not plc_prompt_lambSymbol then
-	plc_prompt_lambSymbol = "λ"
-end
+plc_prompt_lambSymbol = plc_prompt_lambSymbol or "λ"
 -- Version control (e.g. Git) branch symbol. Used to indicate the name of a branch.
-if not plc_git_branchSymbol then
-	plc_git_branchSymbol = ""
-end
+plc_git_branchSymbol = plc_git_branchSymbol or ""
 -- Version control (e.g. Git) conflict symbol. Used to indicate there's a conflict.
-if not plc_git_conflictSymbol then
-	plc_git_conflictSymbol = "!"
-end
+plc_git_conflictSymbol = plc_git_conflictSymbol or "!"
 -- Version control (e.g. Hg) changes symbol. Used to indicate there's a change.
-if not plc_hg_changesSymbol then
-	plc_hg_changesSymbol = ""
+plc_hg_changesSymbol = plc_hg_changesSymbol or ""
+
+plc_git_addcountSymbol = plc_git_addcountSymbol or "+"
+plc_git_modifycountSymbol = plc_git_modifycountSymbol or "*"
+plc_git_deletecountSymbol = plc_git_deletecountSymbol or "-"
+plc_git_renamecountSymbol = plc_git_renamecountSymbol or "🎃"
+plc_git_summarycountSymbol = plc_git_summarycountSymbol or "±"
+plc_git_untrackedcountSymbol = plc_git_untrackedcountSymbol or "?"
+
+plc_git_aheadbehindSymbol = plc_git_aheadbehindSymbol or "☁"
+plc_git_aheadcountSymbol = plc_git_aheadcountSymbol or "↓"
+plc_git_behindcountSymbol = plc_git_behindcountSymbol or "↑"
+
+plc_git_stagedSymbol = plc_git_stagedSymbol or "↗"
+
+plc_battery_levelSymbol = plc_battery_levelSymbol or "%"
+plc_battery_chargingSymbol = plc_battery_chargingSymbol or "⚡"
+
+-- Range of priorities.
+plc_priority_start = 51
+plc_priority_finish = 99
+
+local function bookend_priority(prio)
+	if prio <= plc_priority_start then
+		return plc_priority_start + 1
+	elseif prio >= plc_priority_finish then
+		return plc_priority_finish - 1
+	else
+		return prio
+	end
 end
+
+-- Segment priorities.
+-- Can be defined in _powerline_config.lua to reorder segments.
+-- Keep them between plc_priority_start and plc_priority_finish.
+plc_priority_battery = bookend_priority(plc_priority_battery or plc_priority_start + 1)
+plc_priority_date = bookend_priority(plc_priority_date or plc_priority_start + 2)
+plc_priority_prompt = bookend_priority(plc_priority_prompt or 55)
+plc_priority_npm = bookend_priority(plc_priority_npm or 60)
+plc_priority_versionControl = bookend_priority(plc_priority_versionControl or 61)
 
 ---
 -- Adds an arrow symbol to the input text with the correct colors
@@ -321,14 +348,14 @@ end
 if not clink.version_major then
 
 	-- Old Clink API (v0.4.x)
-	clink.prompt.register_filter(resetPrompt, 51)
-	clink.prompt.register_filter(closePrompt, 99)
+	clink.prompt.register_filter(resetPrompt, plc_priority_start)
+	clink.prompt.register_filter(closePrompt, plc_priority_finish)
 
 else
 
 	-- New Clink API (v1.x)
-	resetPrompt = clink.promptfilter(51)
-	closePrompt = clink.promptfilter(99)
+	resetPrompt = clink.promptfilter(plc_priority_start)
+	closePrompt = clink.promptfilter(plc_priority_finish)
 
 	---
 	-- Resets the prompt and all state variables

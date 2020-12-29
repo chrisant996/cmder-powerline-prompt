@@ -13,111 +13,138 @@
 ---------------------------
 -- HOW TO SET CONFIG VALUES
 ---------------------------
--- REQUIRED config values must have a value, even if it's an empty zero-length string.
--- OPTIONAL config values can be disabled by commenting the entry. Just add -- before the line.
 -- Always keep the _powerline_config.lua.sample file to restore to if your config got messed up.
+-- Copy _powerline_config.lua.sample to _powerline_config.lua and uncomment variables you want to set/change.
 
 
 -- Behavior ------------------------------------------------------------------
 
---- NOTE: If the original %PROMPT% string starts with $+ then the cwd segment
---- will include the "+" signs corresponding to the pushd stack depth.
+---- NOTE: If the original %PROMPT% string starts with $+ then the cwd segment
+---  will include the "+" signs corresponding to the pushd stack depth.
 
---- REQUIRED. plc_prompt_type is whether the displayed prompt is the full path or only the folder name
- -- Use:
- -- "full" for full path like C:\Windows\System32
- -- "folder" for folder name only like System32
- -- "smart" to switch in git repo to folder name instead of full path 
- -- default is full
-plc_prompt_type = "smart"
+---- Whether the displayed prompt is the full path or only the folder name.
+  -- Use:
+  --   "full" for full path like C:\Windows\System32
+  --   "folder" for folder name only like System32
+  --   "smart" to switch in git repo to folder name instead of full path 
+  -- default is "smart"
+--plc_prompt_type = "full"
 
---- REQUIRED. plc_prompt_useHomeSymbol is whether to show ~ instead of the full path to the user's home folder
- -- Use true or false
- -- default is true
-plc_prompt_useHomeSymbol = true
+---- Whether to show ~ instead of the full path to the user's home folder.
+  -- Use true or false
+  -- default is true
+--plc_prompt_useHomeSymbol = false
 
---- OPTIONAL. plc_prompt_useLambSymbol is whether to add plc_prompt_lambSymbol on a new line under the prompt.
- -- Use true or false (or nil)
- -- default is true
-plc_prompt_useLambSymbol = true
+---- Whether to add plc_prompt_lambSymbol on a new line under the prompt.
+  -- Use true or false
+  -- default is true
+--plc_prompt_useLambSymbol = false
 
---- OPTIONAL. Whether to show the date.
- -- Use:
- -- "above" to show the date in a separate line above the powerline prompt
- -- "left" to show the date in a leftmost segment
- -- "right" to show the date in a rightmost segment
- -- or use nil for no date
- -- default is nil
-plc_date_position = nil
+---- Where (and whether) to show the date.
+  -- Use:
+  --   "above" to show the date in a separate line above the powerline prompt
+  --   "left" to show the date in a leftmost segment
+  --   "right" to show the date in a rightmost segment
+  --   "priority" to show the date segment ordered based on plc_priority_date
+  --   nil to not show the date
+  -- default is nil
+--plc_date_position = "left"
 
---- OPTIONAL. The date format to use.
- -- Refer to https://www.lua.org/pil/22.1.html for references
- -- default is "%a %x  %X" when plc_date_position is "above"
- -- default is "%a %H:%M" when plc_date_position is "left" or "right"
+---- The date format to use.
+  -- Refer to https://www.lua.org/pil/22.1.html for references
+  -- default is "%a %x  %X" when plc_date_position is "above"
+  -- default is "%a %H:%M" when plc_date_position is "left" or "right" or "priority"
 --plc_date_format = "%A %B %d, %Y  %I:%M %p"
 
---- OPTIONAL. Whether to show detailed operation counts in the git prompt.
- -- Use true or false (or nil)
- -- default is false
-plc_git_status_details = false
+---- Whether to put the battery level in the date segment.
+  -- When false, the battery level indicator is colored according to the charge level.
+  -- Use true or false
+  -- default is false
+--plc_battery_withDate = true
 
---- OPTIONAL. Whether to include summary of staged files. This is usually fast.
- -- Use true or false (or nil)
- -- default is true
-plc_git_staged = true
+---- Hide the battery segment above this charge level.
+  -- Use nil, or 1 to 100
+  -- nil never shows the battery level (and doesn't even get the battery level)
+  -- 100 always shows the battery level
+  -- default is nil
+--plc_battery_showLevel = 100
 
---- OPTIONAL. Whether to include summary of ahead/behind commits. This can take some time to compute.
- -- Use true or false (or nil)
- -- default is false
-plc_git_aheadbehind = false
+---- Battery low level (use red color).
+  -- Use 1 to 100
+  -- default is 20
+--plc_battery_lowLevel = 10
+
+---- Battery medium level (use yellow color).
+  -- Use 1 to 100
+  -- default is 40
+--plc_battery_mediumLevel = 25
+
+---- Whether to show detailed operation counts in the git prompt.
+  -- Use true or false
+  -- default is false
+--plc_git_status_details = true
+
+---- Whether to include summary of staged files. This is usually fast.
+  -- Use true or false
+  -- default is true
+--plc_git_staged = false
+
+---- Whether to include summary of ahead/behind commits. This can take some time to compute.
+  -- Use true or false
+  -- default is false
+--plc_git_aheadbehind = true
 
 
 -- Symbols -------------------------------------------------------------------
 
--- REQUIRED. Prompt displayed instead of user's home folder e.g. C:\Users\username
-plc_prompt_homeSymbol = "~"
+---- Symbol displayed instead of user's home folder e.g. C:\Users\username
+--plc_prompt_homeSymbol = "~"
 
--- REQUIRED. Symbol connecting each segment of the prompt. Be careful before you change this.
-plc_prompt_arrowSymbol = ""
+---- Symbol connecting each segment of the prompt. Be careful before you change this.
+--plc_prompt_arrowSymbol = ""
 
--- REQUIRED. Symbol displayed in the new line below the prompt.
-plc_prompt_lambSymbol = "λ"
+---- Symbol displayed in the new line below the prompt.
+--plc_prompt_lambSymbol = "λ"
 
--- REQUIRED. Version control (e.g. Git) branch symbol. Used to indicate the name of a branch.
-plc_git_branchSymbol = ""
+---- Version control (e.g. Git) branch symbol. Used to indicate the name of a branch.
+--plc_git_branchSymbol = ""
 
--- REQUIRED. Version control (e.g. Git) conflict symbol. Used to indicate there's a conflict.
-plc_git_conflictSymbol = "!"
+---- Version control (e.g. Git) conflict symbol. Used to indicate there's a conflict.
+--plc_git_conflictSymbol = "!"
 
--- REQUIRED. Symbols for git local status.
-plc_git_addcountSymbol = "+"
-plc_git_modifycountSymbol = "*"
-plc_git_deletecountSymbol = "-"
-plc_git_renamecountSymbol = "🎃"
-plc_git_summarycountSymbol = "±"
-plc_git_untrackedcountSymbol = "?"
+---- Symbols for git local status.
+--plc_git_addcountSymbol = "+"
+--plc_git_modifycountSymbol = "*"
+--plc_git_deletecountSymbol = "-"
+--plc_git_renamecountSymbol = "🎃"
+--plc_git_summarycountSymbol = "±"
+--plc_git_untrackedcountSymbol = "?"
 
--- OPTIONAL. Symbol for git ahead/behind segment.
-plc_git_aheadbehindSymbol = "☁"
+---- Symbol for git ahead/behind segment.
+--plc_git_aheadbehindSymbol = "☁"
 
--- REQUIRED. Symbol for git ahead commit count.
-plc_git_aheadcountSymbol = "↓"
+---- Symbol for git ahead commit count.
+--plc_git_aheadcountSymbol = "↓"
 
--- REQUIRED. Symbol for git behind commit count.
-plc_git_behindcountSymbol = "↑"
+---- Symbol for git behind commit count.
+--plc_git_behindcountSymbol = "↑"
 
--- OPTIONAL. Symbol for git staged segment.
-plc_git_stagedSymbol = "↗"
+---- Symbol for git staged segment.
+--plc_git_stagedSymbol = "↗"
 
--- OPTIONAL. Git symbol used in the folder segment when 'smart' prompt is used and the user navigates to a folder with Git repo
+---- OPTIONAL. Git symbol used in the folder segment when 'smart' prompt is used and the user navigates to a folder with Git repo
 --plc_prompt_gitSymbol = "GIT"
 
--- REQUIRED. Hg branch symbol. Used to indicate the name of a branch 
-plc_hg_branchSymbol = ""
+---- Hg changes symbol. Used to indicate there are changes.
+  -- You can use "  " conflict symbol with 'Anonymous Powerline' font.
+--plc_hg_changesSymbol = ""
 
--- REQUIRED. Hg conflict symbol. Used to indicate there's a conflict.
-plc_hg_conflictSymbol = "!"
--- You can use "  " conflict symbol with 'Anonymous Powerline' font.
-
--- OPTIONAL. npm Symbol used in the NPM segment as visual indicator.
+---- OPTIONAL. npm symbol used in the NPM segment as visual indicator.
 --plc_npm_npmSymbol = "NPM"
+
+---- Symbol for battery level.
+--plc_battery_levelSymbol = "%"
+
+---- Symbol for battery charging indicator.
+--plc_battery_chargingSymbol = ""
+
