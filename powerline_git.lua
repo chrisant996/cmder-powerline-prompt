@@ -223,7 +223,7 @@ local function init()
         if ahead ~= "0" or behind ~= "0" then
             segment = {}
             segment.text = " "
-            if plc_git_aheadbehindSymbol and #plc_git_aheadbehindSymbol then
+            if plc_git_aheadbehindSymbol and #plc_git_aheadbehindSymbol > 0 then
                 segment.text = segment.text..plc_git_aheadbehindSymbol.." "
             end
             segment.textColor = segmentColors.remote.text
