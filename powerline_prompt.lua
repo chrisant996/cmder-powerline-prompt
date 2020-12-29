@@ -1,4 +1,4 @@
--- Configurations
+I-- Configurations
 --- plc_prompt_type is whether the displayed prompt is the full path or only the folder name
  -- Use:
  -- "full" for full path like C:\Windows\System32
@@ -15,9 +15,6 @@ if not plc_prompt_type then
 end
 if not plc_prompt_useHomeSymbol then
 	plc_prompt_useHomeSymbol = true
-end
-if not plc_prompt_homeSymbolEnvironment then
-    plc_prompt_homeSymbolEnvironment = "HOME"
 end
 
 -- Extracts only the folder name from the input Path
@@ -75,9 +72,9 @@ local function init()
     -- If a Git repo is active, it will only show the folder name
     -- This helps users avoid having a super long prompt
         local git_dir = get_git_dir()
-        if plc_prompt_useHomeSymbol and string.find(cwd, clink.get_env(plc_prompt_homeSymbolEnvironment)) and git_dir ==nil then
+        if plc_prompt_useHomeSymbol and string.find(cwd, clink.get_env("HOME")) and git_dir ==nil then
             -- in both smart and full if we are in home, behave like a proper command line
-            cwd = string.gsub(cwd, clink.get_env(plc_prompt_homeSymbolEnvironment), plc_prompt_homeSymbol)
+            cwd = string.gsub(cwd, clink.get_env("HOME"), plc_prompt_homeSymbol)
         else
             -- either not in home or home not supported then check the smart path
             if plc_prompt_type == promptTypeSmart then
