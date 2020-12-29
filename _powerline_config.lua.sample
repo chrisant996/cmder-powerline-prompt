@@ -1,14 +1,15 @@
--- Configurations
+----------------
+-- CONFIGURATION
+----------------
 -- Config file is "_powerline_config.lua"
 -- Sample config file is "_powerline_config.lua.sample"
-
--- Configurations are stored as variables
+--
+-- Configurations are stored as variables.
 -- Each variable is usually named in this pattern:
--- plc_<addon>_<property>
--- Where 'plc' is short for 'powerline config'
--- Ex: plc_prompt_type is variable for the prompt addon for specifying the type of prompt to show
--- Config for powerline core are named like this:
--- plc_core_<property>
+--   plc_<addon>_<property>
+-- Where 'plc' is short for 'powerline config'.
+-- Ex: plc_prompt_type is variable for the prompt addon for specifying the type of prompt to show.
+
 
 ---------------------------
 -- HOW TO SET CONFIG VALUES
