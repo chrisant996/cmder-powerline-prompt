@@ -7,7 +7,7 @@ It looks like this:
 The prompt has multiple segments:  
 - Folder: in blue. Displays the folder name, or full path. Replaces the user's home folder with a tilde (~).  
 - npm: in teal. If it detects an npm package, it displays the package name and version number.  
-- Git: in green or yellow. If it detects a Git repo, it displays the branch name. A green color is used if no changes are detected. A yellow color is used if changes are found.  
+- Git: in various colors. If it detects a Git repo, it displays the branch name. Green if no changes, yellow if changes, red for conflicts, magenta for staged changes, and cyan for commits ahead/behind upstream.
 
 In the screenshot, [Fira Code](https://github.com/tonsky/FiraCode) font is used.  
 
