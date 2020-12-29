@@ -1,4 +1,4 @@
-I-- Configurations
+-- Configurations
 --- plc_prompt_type is whether the displayed prompt is the full path or only the folder name
  -- Use:
  -- "full" for full path like C:\Windows\System32
@@ -98,6 +98,7 @@ end
 
 -- Register this addon with Clink
 local addAddonSegment = nil
+local prompt_priority = 55
 
 ---
 -- Uses the segment properties to add a new segment to the prompt
@@ -110,7 +111,7 @@ if not clink.version_major then
 		init()
 		addSegment(segment.text, segment.textColor, segment.fillColor)
 	end
-	clink.prompt.register_filter(addAddonSegment, 55)
+	clink.prompt.register_filter(addAddonSegment, prompt_priority)
 
 	clink.prompt.register_filter(function() extract_pushd_depth(clink.prompt.value) end, 1)
 
@@ -118,7 +119,7 @@ else
 
 	-- New Clink API (v1.x)
 
-	addAddonSegment = clink.promptfilter(55)
+	addAddonSegment = clink.promptfilter(prompt_priority)
 	function addAddonSegment:filter(prompt)
 		init()
 		return addSegment(segment.text, segment.textColor, segment.fillColor)

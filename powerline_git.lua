@@ -253,6 +253,7 @@ end
 
 -- Register this addon with Clink
 local addAddonSegment = nil
+local prompt_priority = 61
 
 ---
 -- Uses the segment properties to add a new segment to the prompt
@@ -264,12 +265,12 @@ if not clink.version_major then
         build_prompt()
     end
 
-    clink.prompt.register_filter(addAddonSegment, 61)
+    clink.prompt.register_filter(addAddonSegment, prompt_priority)
 
 else
 
     -- New Clink API (v1.x)
-    addAddonSegment = clink.promptfilter(61)
+    addAddonSegment = clink.promptfilter(prompt_priority)
 
     function addAddonSegment:filter(prompt)
         return build_prompt(prompt)
