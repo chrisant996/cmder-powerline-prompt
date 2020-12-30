@@ -53,7 +53,7 @@
 ---- The date format to use.
   -- Refer to https://www.lua.org/pil/22.1.html for references
   -- default is "%a %x  %X" when plc_date_position is "above"
-  -- default is "%a %H:%M" when plc_date_position is "left" or "right" or "priority"
+  -- default is "%a %H:%M" when plc_date_position is "normal" or "right"
 --plc_date_format = "%A %B %d, %Y  %I:%M %p"
 
 ---- Whether to put the battery level in the date segment.
