@@ -1,6 +1,6 @@
 # Cmder-powerline-prompt
 
-This is a custom prompt for [Cmder](http://cmder.net/) (the alternative console emulator for Windows). There's also a [PowerShell version](https://github.com/AmrEldib/cmder-powershell-powerline-prompt) of this prompt.  
+This is a custom prompt for [Clink](https://github.com/chrisant996/clink) and/or [Cmder](http://cmder.net/) (the alternative console emulator for Windows). There's also a [PowerShell version](https://github.com/AmrEldib/cmder-powershell-powerline-prompt) of this prompt.  
 It looks like this:  
 ![screenshot](screenshot.png)
 
@@ -15,7 +15,7 @@ The look is inspired by [Powerline for Vim](https://github.com/powerline/powerli
 
 # Requirements
 
-Download the [AnonymousPro font](https://github.com/powerline/fonts/tree/master/AnonymousPro)  
+Download the [AnonymousPro font](https://github.com/powerline/fonts/tree/master/AnonymousPro).  
 You'll be able to use any font in Cmder, but this font contains the symbols included in the prompt.
 
 ## Font
@@ -34,10 +34,10 @@ To use another font and still show symbols correctly:
 # Setup
 
 Download the `.lua` files, and place it in `%CMDER_ROOT%/config` folder.  
-Restart Cmder to load the prompt.
+Restart Cmder or Clink to load the prompt.
 
-**Alternatively**, if you want to maintain link with the original repo, you can clone this repo into any folder  
-`git clone https://github.com/AmrEldib/cmder-powerline-prompt.git git-repo-folder-name`  
+**Alternatively**, if you want to maintain link with the original repo, you can clone this repo into any folder.  
+`git clone https://github.com/chrisant996/cmder-powerline-prompt.git optional-local-folder-name`  
 then create a symbolic link from the `%CMDER_ROOT%/config` folder to the `.lua` file.
 
 ```bat
@@ -71,8 +71,8 @@ See the file `_powerline_config.lua.sample` for full list and details of configu
 ## Links
 
 [Cmder Source Code and README](https://github.com/cmderdev/cmder)  
-[What is Clink](https://github.com/AmrEldib/cmder-powerline-prompt/blob/master/docs/clink.md)  
-[Clink Lua API](https://github.com/AmrEldib/cmder-powerline-prompt/blob/master/docs/clink_api.md)  
+[What is Clink](https://chrisant996.github.io/clink/)  
+[Clink Lua API](https://chrisant996.github.io/clink/clink.html#lua-api)  
 [ANSI Color Sequence](http://ascii-table.com/ansi-escape-sequences.php)
 
 ## Cmder Configurations
@@ -88,33 +88,15 @@ User-specific configurations should go into files named `user-profile` with exte
 
 ## Clink Prompt
 
-The file `%CMDER_ROOT%\vendor\clink.lua` sets the command prompt. See the function `set_prompt_filter`.
-The prompt value is stored in [clink.prompt.value](https://github.com/mridgers/clink/blob/master/docs/api.md#clinkpromptvalue)  
 Drop .lua files into the `%CMDER_ROOT%\Config` folder to customize the prompt.
+
+The file `%CMDER_ROOT%\vendor\clink.lua` sets the command prompt. See the function `set_prompt_filter`.  
+See [Customising The Prompt](https://chrisant996.github.io/clink/clink.html#customisingtheprompt) in the Clink documentation for more info about how prompt customisation works.  
 
 # Status & Contributions
 
-I published this code because it's not nice to keep it to myself. I fix problems that I encounter, and try to fix problems that others encounter if I have time.  
+This is forked from [AmrEldib/cmder-powerline-prompt](https://github.com/AmrEldib/cmder-powerline-prompt), since that repo appears to have been abandoned.  
 This code is provided with the timeless **Works on my Machine** guarantee.  
-You can also check out the [pull requests page](https://github.com/AmrEldib/cmder-powerline-prompt/pulls) for contributions that didn't make back into this repo. These are fixes to problems I didn't encounter, or features not useful to me, but maybe useful to you.  
-Some of these contributions are:  
-- [Show active Python Virtual Environment](https://github.com/AmrEldib/cmder-powerline-prompt/issues/5)  
-- [Add Python's VENV support](https://github.com/AmrEldib/cmder-powerline-prompt/pull/21)  
-
-People are very kind and contribute back fixes and improvements.  
-This section is to acknowledge their contributions and thank them. If you find their contributions helpful to you, please take the time to thank them directly.
-
-* [omniphx](https://github.com/omniphx) [#2](https://github.com/AmrEldib/cmder-powerline-prompt/pull/2)
-* [umar-ahmed](https://github.com/umar-ahmed) [#6](https://github.com/AmrEldib/cmder-powerline-prompt/pull/6)
-* [tvercruysse](https://github.com/tvercruysse) [#10](https://github.com/AmrEldib/cmder-powerline-prompt/pull/10)
-* [igortg](https://github.com/igortg) [#24](https://github.com/AmrEldib/cmder-powerline-prompt/pull/24)
-* [0NG](https://github.com/0NG) [#27](https://github.com/AmrEldib/cmder-powerline-prompt/pull/27)
-* [mattdkerr](https://github.com/mattdkerr) [#29](https://github.com/AmrEldib/cmder-powerline-prompt/pull/29)
-* [ivanjonas](https://github.com/ivanjonas) [#32](https://github.com/AmrEldib/cmder-powerline-prompt/pull/32)
-* [sp3c1](https://github.com/sp3c1) contributed the npm addon [#33](https://github.com/AmrEldib/cmder-powerline-prompt/pull/33)  
-* [Bob Hood](https://github.com/b0bh00d) contributed the new Mercurial addon [#40](https://github.com/AmrEldib/cmder-powerline-prompt/pull/40)  
-
-I'd like to thank all who share their code with everyone for their time and effort.
 
 # Writing an addon  
 This prompt uses an addon architecture to allow for additional functionality.  
