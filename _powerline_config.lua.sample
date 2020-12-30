@@ -106,6 +106,9 @@
 ---- Symbol displayed in the new line below the prompt.
 --plc_prompt_lambSymbol = "λ"
 
+---- SGR parameters for ANSI color for plc_prompt_lambSymbol.
+--plc_prompt_lambColor = "1;39;40"
+
 ---- Version control (e.g. Git) branch symbol. Used to indicate the name of a branch.
 --plc_git_branchSymbol = ""
 

@@ -154,6 +154,8 @@ plc_prompt_homeSymbol = plc_prompt_homeSymbol or "~"
 plc_prompt_arrowSymbol = plc_prompt_arrowSymbol or ""
 -- Symbol displayed in the new line below the prompt.
 plc_prompt_lambSymbol = plc_prompt_lambSymbol or "λ"
+-- SGR parameters for ANSI color for plc_prompt_lambSymbol.
+plc_prompt_lambColor = plc_prompt_lambColor or "1;39;40"
 -- Version control (e.g. Git) branch symbol. Used to indicate the name of a branch.
 plc_git_branchSymbol = plc_git_branchSymbol or ""
 -- Version control (e.g. Git) conflict symbol. Used to indicate there's a conflict.
@@ -379,7 +381,7 @@ else
 			prompt = plc_build_date_prompt(prompt)
 		end
 		if useLamb then
-			return prompt..newLineSymbol..plc_prompt_lambSymbol.." "
+			return prompt..newLineSymbol..ansiEscChar.."["..plc_prompt_lambColor.."m"..plc_prompt_lambSymbol.." "
 		else
 			return prompt.." "
 		end
