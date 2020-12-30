@@ -1,3 +1,5 @@
+local segment_priority = plc_priority_versionControl or 61
+
 -- Constants
 local segmentColors = {
     branch = {
@@ -108,7 +110,6 @@ end
 
 -- Register this addon with Clink
 local addAddonSegment = nil
-local segment_priority = plc_priority_versionControl or 61
 
 ---
 -- Uses the segment properties to add a new segment to the prompt

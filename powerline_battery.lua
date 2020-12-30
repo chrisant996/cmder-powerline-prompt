@@ -1,34 +1,48 @@
+local segment_priority = plc_priority_battery or 52 -- Can't use plc_priority_start+1 because of Lua load order.
+
 ---
 -- Also called from powerline_date.lua
 ---
-function get_battery_status()
-    local charge, charging
+function plc_get_battery_status()
+    local level, charging
     local batt_symbol = plc_battery_levelSymbol
-	local windir = os.getenv("SystemRoot")
-	if not windir or window == "" then
-		windir = ""
-	else
-		windir = path.join(windir, "System32\\wbem\\")
-	end
 
-	for line in io.popen(windir..'wmic.exe Path Win32_Battery Get EstimatedChargeRemaining'):lines() do
-		if tonumber(line) then
-			charge = tonumber(line)
+	if (clink.version_encoded or 0) >= 10010017 then
+		local acpower, batterysaver
+		level,acpower,charging,batterysaver = os.getbatterystatus()
+	else
+		local windir = os.getenv("SystemRoot")
+		if not windir or window == "" then
+			windir = ""
+		else
+			windir = path.join(windir, "System32\\wbem\\")
+		end
+
+		for line in io.popen(windir..'wmic.exe Path Win32_Battery Get EstimatedChargeRemaining'):lines() do
+			if tonumber(line) then
+				level = tonumber(line)
+			end
+		end
+		if level then
+			for line in io.popen(windir..'wmic.exe /Namespace:"\\\\root\\wmi" Path BatteryStatus Get Charging'):lines() do
+				if line:match("TRUE") then
+					charging = true
+				end
+			end
 		end
 	end
-	if not charge then
+
+	if not level or level < 0 then
 		return "", 0
 	end
-	for line in io.popen(windir..'wmic.exe /Namespace:"\\\\root\\wmi" Path BatteryStatus Get Charging'):lines() do
-		if line:match("TRUE") then
-			batt_symbol = plc_battery_chargingSymbol
-		end
+	if charging then
+		batt_symbol = plc_battery_chargingSymbol
 	end
 
-    return charge..batt_symbol, tonumber(charge)
+    return level..batt_symbol, level
 end
 
-function colorize_battery_status(status, level, textRestoreColor, fillRestoreColor)
+function plc_colorize_battery_status(status, level, textRestoreColor, fillRestoreColor)
 	local levelColor
 	if level > (plc_battery_mediumLevel or 40) then
 		levelColor = ""
@@ -64,7 +78,7 @@ local function build_prompt(prompt)
 		return prompt
 	end
 
-	local batteryStatus,level = get_battery_status()
+	local batteryStatus,level = plc_get_battery_status()
 	if not batteryStatus or batteryStatus == "" or level > plc_battery_showLevel then
 		return prompt
 	end
@@ -83,7 +97,6 @@ local function build_prompt(prompt)
 	return addSegment("", colorWhite, colorBlack)
 end
 
-local segment_priority = plc_priority_battery or 52 -- Can't use plc_priority_start+1 because of Lua load order.
 if not clink.version_major then
 
 	-- Old Clink API (v0.4.x)

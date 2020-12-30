@@ -1,5 +1,6 @@
-local function get_package_json_dir(path)
+local segment_priority = plc_priority_npm or 60
 
+local function get_package_json_dir(path)
   -- return parent path for specified entry (either file or directory)
   local function pathname(path)
           local prefix = ""
@@ -59,7 +60,6 @@ end
 
 -- Register this addon with Clink
 local addAddonSegment = nil
-local segment_priority = plc_priority_npm or 60
 
 ---
 -- Uses the segment properties to add a new segment to the prompt

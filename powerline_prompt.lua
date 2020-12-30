@@ -1,3 +1,5 @@
+local segment_priority = plc_priority_prompt or 55
+
 -- Configurations
 --- plc_prompt_type is whether the displayed prompt is the full path or only the folder name
  -- Use:
@@ -98,7 +100,6 @@ end
 
 -- Register this addon with Clink
 local addAddonSegment = nil
-local segment_priority = plc_priority_prompt or 55
 
 ---
 -- Uses the segment properties to add a new segment to the prompt

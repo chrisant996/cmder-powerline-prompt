@@ -371,6 +371,9 @@ else
 	-- Closes the prompts with a new line and the lamb symbol
 	---
 	function closePrompt:filter(prompt)
+		if plc_date_position == "above" or plc_date_position == "right" then
+			prompt = plc_build_date_prompt(prompt)
+		end
 		if plc_prompt_useLambSymbol then
 			return prompt..newLineSymbol..plc_prompt_lambSymbol.." "
 		else

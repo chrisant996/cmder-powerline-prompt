@@ -27,7 +27,7 @@
   -- Use:
   --   "full" for full path like C:\Windows\System32
   --   "folder" for folder name only like System32
-  --   "smart" to switch in git repo to folder name instead of full path 
+  --   "smart" to switch in git repo to folder name instead of full path
   -- default is "smart"
 --plc_prompt_type = "full"
 
@@ -147,5 +147,6 @@
 --plc_battery_levelSymbol = "%"
 
 ---- Symbol for battery charging indicator.
---plc_battery_chargingSymbol = ""
+--plc_battery_chargingSymbol = "⚡" -- Unicode "high voltage" character (the default).
+--plc_battery_chargingSymbol = "" -- Charging indicator in 'Anonymous Powerline' font.
 

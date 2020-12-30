@@ -1,23 +1,15 @@
-local segment_priority
+local segment_priority = plc_priority_date or 54
 
-if plc_date_position == "above" then
-	segment_priority = plc_priority_finish + 1
-	plc_date_format = plc_date_format or "%a %x  %X"
-elseif plc_date_position == "left" then
-	segment_priority = plc_priority_start + 2
-	plc_date_format = plc_date_format or "%a %H:%M"
-elseif plc_date_position == "right" then
-	segment_priority = plc_priority_finish - 1
-	plc_date_format = plc_date_format or "%a %H:%M"
-elseif plc_date_position == "priority" then
-	segment_priority = plc_priority_date or (plc_priority_first + 1)
-	plc_date_format = plc_date_format or "%a %H:%M"
-end
+function plc_build_date_prompt(prompt)
+	if plc_date_position ~= "above" and
+			plc_date_position ~= "normal" and
+			plc_date_position ~= "right" then
+		return prompt
+	end
 
-local function build_prompt(prompt)
 	local batteryStatus,level
 	if plc_battery_showLevel and plc_battery_withDate then
-		batteryStatus,level = get_battery_status()
+		batteryStatus,level = plc_get_battery_status()
 		if batteryStatus and level > plc_battery_showLevel then
 			batteryStatus = ""
 		end
@@ -26,40 +18,44 @@ local function build_prompt(prompt)
 		batteryStatus = ""
 	end
 
+	local date_format = plc_date_format or (((plc_date_position == "above") and "%a %x  %X") or "%a %H:%M")
+
 	if plc_date_position == "above" then
 		if batteryStatus ~= "" then
-			batteryStatus = colorize_battery_status(batteryStatus.."  ", level)
+			batteryStatus = plc_colorize_battery_status(batteryStatus.."  ", level)
 		end
 		return batteryStatus..os.date(plc_date_format)..newLineSymbol..prompt
 	elseif plc_date_position == "right" then
 		if batteryStatus ~= "" then
-			batteryStatus = colorize_battery_status(batteryStatus.."  ", level)
+			batteryStatus = plc_colorize_battery_status(batteryStatus.."  ", level)
 		end
 		return addSegment("  "..batteryStatus..os.date(plc_date_format), colorWhite, colorBlack)
 	else
 		if batteryStatus ~= "" then
-			batteryStatus = colorize_battery_status(" "..batteryStatus.." ", level, colorBlack, colorBrightBlack)
+			batteryStatus = plc_colorize_battery_status(" "..batteryStatus.." ", level, colorBlack, colorBrightBlack)
 		end
 		return addSegment(batteryStatus.." "..os.date(plc_date_format).." ", colorBlack, colorBrightBlack)
 	end
 end
 
-if segment_priority then
-	if not clink.version_major then
+if not clink.version_major then
 
-		-- Old Clink API (v0.4.x)
-		addAddonSegment = function ()
-			clink.prompt.value = build_prompt(clink.prompt.value)
+	-- Old Clink API (v0.4.x)
+	addAddonSegment = function ()
+		if plc_date_position == "normal" then
+			clink.prompt.value = plc_build_date_prompt(clink.prompt.value)
 		end
-		clink.prompt.register_filter(addAddonSegment, segment_priority)
-
-	else
-
-		-- New Clink API (v1.x)
-		local date_prompt = clink.promptfilter(segment_priority)
-		function date_prompt:filter(prompt)
-			return build_prompt(prompt)
-		end
-
 	end
+	clink.prompt.register_filter(addAddonSegment, segment_priority)
+
+else
+
+	-- New Clink API (v1.x)
+	local date_prompt = clink.promptfilter(segment_priority)
+	function date_prompt:filter(prompt)
+		if plc_date_position == "normal" then
+			return plc_build_date_prompt(prompt)
+		end
+	end
+
 end
