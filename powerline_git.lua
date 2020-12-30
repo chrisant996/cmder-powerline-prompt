@@ -207,7 +207,11 @@ local function init()
     table.insert(segments, segment)
 
     -- Staged status
-    if plc_git_staged and gitStatus and gitStatus.staged then
+	local showStaged = plc_git_staged
+	if showStaged == nil then
+		showStaged = true
+	end
+    if showStaged and gitStatus and gitStatus.staged then
         segment = {}
         segment.text = " "
         if plc_git_stagedSymbol and #plc_git_stagedSymbol then
