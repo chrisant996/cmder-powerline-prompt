@@ -18,23 +18,30 @@ function plc_build_date_prompt(prompt)
 		batteryStatus = ""
 	end
 
-	local date_format = plc_date_format or (((plc_date_position == "above") and "%a %x  %X") or "%a %H:%M")
+	local date_format = plc_date_format
+	if not date_format then
+		if plc_date_position == "above" then
+			date_format = "%a %x  %X"
+		else
+			date_format = "%a %H:%M"
+		end
+	end
 
 	if plc_date_position == "above" then
 		if batteryStatus ~= "" then
 			batteryStatus = plc_colorize_battery_status(batteryStatus.."  ", level)
 		end
-		return batteryStatus..os.date(plc_date_format)..newLineSymbol..prompt
+		return batteryStatus..os.date(date_format)..newLineSymbol..prompt
 	elseif plc_date_position == "right" then
 		if batteryStatus ~= "" then
 			batteryStatus = plc_colorize_battery_status(batteryStatus.."  ", level)
 		end
-		return addSegment("  "..batteryStatus..os.date(plc_date_format), colorWhite, colorBlack)
+		return addSegment("  "..batteryStatus..os.date(date_format), colorWhite, colorBlack)
 	else
 		if batteryStatus ~= "" then
 			batteryStatus = plc_colorize_battery_status(" "..batteryStatus.." ", level, colorBlack, colorBrightBlack)
 		end
-		return addSegment(batteryStatus.." "..os.date(plc_date_format).." ", colorBlack, colorBrightBlack)
+		return addSegment(batteryStatus.." "..os.date(date_format).." ", colorBlack, colorBrightBlack)
 	end
 end
 

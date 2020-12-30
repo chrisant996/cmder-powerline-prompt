@@ -44,12 +44,11 @@
 ---- Where (and whether) to show the date.
   -- Use:
   --   "above" to show the date in a separate line above the powerline prompt
-  --   "left" to show the date in a leftmost segment
   --   "right" to show the date in a rightmost segment
-  --   "priority" to show the date segment ordered based on plc_priority_date
+  --   "normal" to show the date in a normal segment
   --   nil to not show the date
   -- default is nil
---plc_date_position = "left"
+--plc_date_position = "normal"
 
 ---- The date format to use.
   -- Refer to https://www.lua.org/pil/22.1.html for references
