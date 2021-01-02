@@ -1,5 +1,8 @@
 local segment_priority = plc_priority_date or 54
 
+plc_date_segment_textColor = colorBlack
+plc_date_segment_fillColor = colorBrightBlack
+
 function plc_build_date_prompt(prompt)
 	if plc_date_position ~= "above" and
 			plc_date_position ~= "normal" and
@@ -39,9 +42,9 @@ function plc_build_date_prompt(prompt)
 		return addSegment("  "..batteryStatus..os.date(date_format), colorWhite, colorBlack)
 	else
 		if batteryStatus ~= "" then
-			batteryStatus = plc_colorize_battery_status(" "..batteryStatus.." ", level, colorBlack, colorBrightBlack)
+			batteryStatus = plc_colorize_battery_status(" "..batteryStatus.." ", level, plc_date_segment_textColor, plc_date_segment_fillColor)
 		end
-		return addSegment(batteryStatus.." "..os.date(date_format).." ", colorBlack, colorBrightBlack)
+		return addSegment(batteryStatus.." "..os.date(date_format).." ", plc_date_segment_textColor, plc_date_segment_fillColor)
 	end
 end
 

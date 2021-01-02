@@ -1,5 +1,8 @@
 local segment_priority = plc_priority_prompt or 55
 
+plc_prompt_segment_textColor = colorWhite
+plc_prompt_segment_fillColor = colorBlue
+
 -- Configurations
 --- plc_prompt_type is whether the displayed prompt is the full path or only the folder name
  -- Use:
@@ -36,8 +39,8 @@ end
 local segment = {
     isNeeded = true,
     text = "",
-    textColor = colorWhite,
-    fillColor = colorBlue
+    textColor = plc_prompt_segment_textColor,
+    fillColor = plc_prompt_segment_fillColor
 }
 
 ---
@@ -96,6 +99,8 @@ local function init()
     end
 
 	segment.text = " "..dirStackDepth..cwd.." "
+	segment.textColor = plc_prompt_segment_textColor
+	segment.fillColor = plc_prompt_segment_fillColor
 end
 
 -- Register this addon with Clink
