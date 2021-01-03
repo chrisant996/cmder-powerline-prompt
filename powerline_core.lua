@@ -37,6 +37,8 @@
 -- ANSI Escape Character
 ansiEscChar = "\x1b"
 -- ANSI Foreground Colors
+ansiFgBold = "1"
+ansiFgClrDefault = "39"
 ansiFgClrBlack = "30"
 ansiFgClrRed = "31"
 ansiFgClrGreen = "32"
@@ -54,6 +56,7 @@ ansiFgClrBrightMagenta = "95"
 ansiFgClrBrightCyan = "96"
 ansiFgClrBrightWhite = "97"
 -- ANSI Background Colors
+ansiBgClrDefault = "49"
 ansiBgClrBlack = "40"
 ansiBgClrRed = "41"
 ansiBgClrGreen = "42"
@@ -137,6 +140,13 @@ colorBrightWhite = {
 	background = ansiBgClrBrightWhite
 }
 
+-- Use this with caution; it probably will NOT do what you might want if used
+-- with a segment color.
+colorDefault = {
+	foreground = ansiFgClrDefault,
+	background = ansiBgClrDefault
+}
+
 -- Variables to maintain prompt state
 currentSegments = ""
 currentFillColor = colorBlue.background
@@ -155,7 +165,8 @@ plc_prompt_arrowSymbol = plc_prompt_arrowSymbol or ""
 -- Symbol displayed in the new line below the prompt.
 plc_prompt_lambSymbol = plc_prompt_lambSymbol or "λ"
 -- SGR parameters for ANSI color for plc_prompt_lambSymbol.
-plc_prompt_lambColor = plc_prompt_lambColor or "1;39;40"
+plc_prompt_lambTextColor = plc_prompt_lambTextColor or ansiFgBold
+plc_prompt_lambFillColor = plc_prompt_lambFillColor or ansiBgClrDefault
 -- Version control (e.g. Git) branch symbol. Used to indicate the name of a branch.
 plc_git_branchSymbol = plc_git_branchSymbol or ""
 -- Version control (e.g. Git) conflict symbol. Used to indicate there's a conflict.
@@ -209,11 +220,14 @@ plc_priority_versionControl = bookend_priority(plc_priority_versionControl or 61
 -- newColor {color} Color of the prompt on the right of the arrow symbol. Use one of the color constants as input.
 -- @return {string} text with an arrow symbol added to it
 ---
+local plc_lastArrow_len = 0
 function addArrow(text, oldColor, newColor)
 	-- Old color is the color of the previous segment
 	-- New color is the color of the next segment
 	-- An arrow is a character written using the old color on a background of the new color
+	local old_len = #text
 	text = addTextWithColor(text, plc_prompt_arrowSymbol, oldColor.foreground, newColor.background)
+	plc_lastArrow_len = #text - old_len
 	return text
 end
 
@@ -232,8 +246,8 @@ function addTextWithColor(text, textToAdd, textColorValue, fillColorValue)
 	-- textToAdd is "Hello"
 	-- This adds to text \x1b[30;40mHello\x1b[0m
 	-- which add Hello with red background and black letters
-	-- [0m at the end turns off all attributes
-	text = text..ansiEscChar.."["..textColorValue..";"..fillColorValue.."m"..textToAdd..ansiEscChar.."[0m"
+	-- [0m at the end restore default attributes
+	text = text..ansiEscChar.."[0;"..textColorValue..";"..fillColorValue.."m"..textToAdd..ansiEscChar.."[0m"
 	return text
 end
 
@@ -251,15 +265,14 @@ function addSegment(text, textColor, fillColor)
 		newPrompt = ""
 	else
 		-- Remove the existing arrow
-		-- The last arrow with all its surrounding escape characters and graphics mode settings count as 7 characters
-		newPrompt = string.sub(currentSegments, 0, string.len(currentSegments) - 7)
+		newPrompt = string.sub(currentSegments, 0, string.len(currentSegments) - plc_lastArrow_len)
 		-- Add arrow with color of new segment
 		newPrompt = addArrow(newPrompt, currentFillColor, fillColor)
 	end
 	-- Write the text with the fill color
 	newPrompt = addTextWithColor(newPrompt, text, textColor.foreground, fillColor.background)
 	-- Write the closing arrow
-	newPrompt = addArrow(newPrompt, fillColor, colorBlack)
+	newPrompt = addArrow(newPrompt, fillColor, colorDefault)
 
 	-- Update current values
 	currentSegments = newPrompt
@@ -293,7 +306,7 @@ end
 closePrompt = nil
 if not clink.version_major then
 	closePrompt = function ()
-		clink.prompt.value = clink.prompt.value..newLineSymbol..plc_prompt_lambSymbol.." "
+		clink.prompt.value = clink.prompt.value..newLineSymbol..ansiEscChar.."[0;"..plc_prompt_lambTextColor..";"..plc_prompt_lambFillColor.."m"..plc_prompt_lambSymbol.." "
 	end
 end
 
@@ -381,7 +394,7 @@ else
 			prompt = plc_build_date_prompt(prompt)
 		end
 		if useLamb then
-			return prompt..newLineSymbol..ansiEscChar.."["..plc_prompt_lambColor.."m"..plc_prompt_lambSymbol.." "
+			return prompt..newLineSymbol..ansiEscChar.."[0;"..plc_prompt_lambTextColor..";"..plc_prompt_lambFillColor.."m"..plc_prompt_lambSymbol.." "
 		else
 			return prompt.." "
 		end

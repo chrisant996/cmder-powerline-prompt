@@ -95,6 +95,24 @@
 --plc_git_aheadbehind = true
 
 
+-- Colors --------------------------------------------------------------------
+
+---- Colors for the date segment.
+  -- Use the colorBlack, colorRed, etc colors from powerline_core.lua.
+--plc_date_segment_textColor = colorBlack
+--plc_date_segment_fillColor = colorBrightBlack
+
+---- Colors for the prompt segment (cwd).
+  -- Use the colorBlack, colorRed, etc colors from powerline_core.lua.
+--plc_prompt_segment_textColor = colorWhite
+--plc_prompt_segment_fillColor = colorBlue
+
+---- Colors for plc_prompt_lambSymbol.
+  -- Use the ANSI Fg and Bg colors from powerline_core.lua.
+--plc_prompt_lambTextColor = ansiFgBold
+--plc_prompt_lambFillColor = ansiBgClrDefault
+
+
 -- Symbols -------------------------------------------------------------------
 
 ---- Symbol displayed instead of user's home folder e.g. C:\Users\username
@@ -105,9 +123,6 @@
 
 ---- Symbol displayed in the new line below the prompt.
 --plc_prompt_lambSymbol = "λ"
-
----- SGR parameters for ANSI color for plc_prompt_lambSymbol.
---plc_prompt_lambColor = "1;39;40"
 
 ---- Version control (e.g. Git) branch symbol. Used to indicate the name of a branch.
 --plc_git_branchSymbol = ""
