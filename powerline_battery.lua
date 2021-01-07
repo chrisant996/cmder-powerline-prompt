@@ -7,7 +7,11 @@ function plc_get_battery_status()
     local level, charging
     local batt_symbol = plc_battery_levelSymbol
 
-	if (clink.version_encoded or 0) >= 10010017 then
+	if (clink.version_encoded or 0) >= 10010020 then
+		local status = os.getbatterystatus()
+		level = status.level
+		charging = status.charging
+	elseif (clink.version_encoded or 0) >= 10010017 then
 		local acpower, batterysaver
 		level,acpower,charging,batterysaver = os.getbatterystatus()
 	else
