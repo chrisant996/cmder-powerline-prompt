@@ -20,17 +20,9 @@ end
 
 ---
  -- check for python files in current directory
+ -- or in any parent directory
 ---
 local function get_py_files(path)
-    local function pathname(path)
-        local prefix = ""
-        local i = path:find("[\\/:][^\\/:]*$")
-        if i then
-                prefix = path:sub(1, i-1)
-        end
-        return prefix
-    end
-
     local function has_py_files(dir)
         local getN = 0
         for n in pairs(os.globfiles("*.py")) do
@@ -39,9 +31,7 @@ local function get_py_files(path)
         return getN
     end
 
-    if not path or path == '.' then path = clink.get_cwd() end
-
-    dir = pathname(path)
+    dir = toParent(path)
 
     files = has_py_files(dir) > 0
     return files
@@ -66,16 +56,21 @@ local function init()
         segment.isNeeded = get_virtual_env(plc_python_virtualEnvVariable)
     else
         segment.isNeeded = get_virtual_env()
-    end
+	end
+	if not segment.isNeeded then
+		-- return early to avoid wasting time by calling get_py_files()!
+		return
+	end
 
-    if not plc_python_alwaysShow and not get_py_files() then segment.isNeeded = false end
+	if not plc_python_alwaysShow and not get_py_files() then
+		segment.isNeeded = false
+		return
+	end
 
-    if segment.isNeeded then
-        if plc_python_pythonSymbol then
-            segment.text = " "..plc_python_pythonSymbol.." ["..segment.isNeeded.."] "
-        else
-            segment.text = " ["..segment.isNeeded.."] "
-        end
+    if plc_python_pythonSymbol then
+        segment.text = " "..plc_python_pythonSymbol.." ["..segment.isNeeded.."] "
+    else
+        segment.text = " ["..segment.isNeeded.."] "
     end
 end
 

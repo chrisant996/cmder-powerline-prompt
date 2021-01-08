@@ -1,21 +1,20 @@
 local function get_pom_xml_dir(path)
-
-  -- return parent path for specified entry (either file or directory)
-  local function pathname(path)
-          local prefix = ""
-          local postfix = ""
-          local i = path:find("[\\/:][^\\/:]*$")
-          if i then
-                  prefix = path:sub(1, i-1)
-
-          end
-          return prefix
-  end
-
   if not path or path == '.' then path = clink.get_cwd() end
 
-  local parent_path = pathname(path)
-  return io.open(path..'\\pom.xml') or (parent_path ~= path and get_pom_xml_dir(parent_path) or nil)
+  local pom_file = joinPaths(path, 'pom.xml')
+  if (clink.version_encoded or 0) >= 10010000 then
+    -- More efficient than opening the file.
+    if os.isfile(pom_file) then
+      return true
+    end
+  else
+    if io.open(pom_file) then
+      return true
+    end
+  end
+
+  local parent_path = toParent(path)
+  return (parent_path ~= "" and get_pom_xml_dir(parent_path) or nil)
 end
 
 -- * Segment object with these properties:

@@ -21,27 +21,10 @@ local segmentColors = {
  -- @return {string} Path to specified directory or nil if such dir not found
 local function get_dir_contains(path, dirname)
 
-    -- return parent path for specified entry (either file or directory)
-    local function pathname(path)
-        local prefix = ""
-        local i = path:find("[\\/:][^\\/:]*$")
-        if i then
-            prefix = path:sub(1, i-1)
-        end
-        return prefix
-    end
-
-    -- Navigates up one level
-    local function up_one_level(path)
-        if path == nil then path = '.' end
-        if path == '.' then path = clink.get_cwd() end
-        return pathname(path)
-    end
-
     -- Checks if provided directory contains hg directory
     local function has_specified_dir(path, specified_dir)
         if path == nil then path = '.' end
-        local found_dirs = clink.find_dirs(path..'/'..specified_dir)
+        local found_dirs = clink.find_dirs(joinPaths(path, specified_dir))
         if #found_dirs > 0 then return true end
         return false
     end
@@ -51,11 +34,11 @@ local function get_dir_contains(path, dirname)
 
     -- If we're already have .hg directory here, then return current path
     if has_specified_dir(path, dirname) then
-        return path..'/'..dirname
+        return joinPaths(path, dirname)
     else
         -- Otherwise go up one level and make a recursive call
-        local parent_path = up_one_level(path)
-        if parent_path == path then
+        local parent_path = toParent(path)
+        if parent_path == "" then
             return nil
         else
             return get_dir_contains(parent_path, dirname)

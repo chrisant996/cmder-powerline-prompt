@@ -33,7 +33,7 @@ function get_git_branch(git_dir)
 
     -- If git directory not found then we're probably outside of repo
     -- or something went wrong. The same is when head_file is nil
-    local head_file = git_dir and io.open(git_dir..'/HEAD')
+    local head_file = git_dir and io.open(joinPaths(git_dir, 'HEAD'))
     if not head_file then return end
 
     local HEAD = head_file:read()

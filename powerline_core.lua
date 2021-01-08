@@ -311,6 +311,44 @@ if not clink.version_major then
 end
 
 ---
+-- Gets the parent directory for specified entry (either file or directory),
+-- or "" if not possible.
+---
+function toParent(dir)
+	local prefix = ""
+	if dir == nil then dir = '.' end
+	if dir == '.' then dir = clink.get_cwd() end
+	if (clink.version_encoded or 0) >= 10010020 then
+		-- Clink v1.1.20 and higher provide an API to do this right.
+		local child
+		prefix,child = path.toparent(dir)
+		if child == "" then
+			prefix = ""
+		end
+	else
+		-- This approach has several bugs. For example, "c:/" yields "c".
+		-- So walking up looking for .git or .hg tries "c:/.git" and then
+		-- tries "c/.git".
+		local i = dir:find("[\\/:][^\\/:]*$")
+		if i then
+			prefix = dir:sub(1, i-1)
+		end
+	end
+	return prefix
+end
+
+---
+-- Joins path components.
+---
+function joinPaths(lhs, rhs)
+	if (clink.version_encoded or 0) >= 10010020 then
+		return path.join(lhs, rhs)
+	else
+		return lhs..'/'..rhs
+	end
+end
+
+---
 -- Gets the .git directory
 -- copied from clink.lua
 -- clink.lua is saved under %CMDER_ROOT%\vendor
@@ -318,23 +356,23 @@ end
 ---
 function get_git_dir(path)
 
-	-- return parent path for specified entry (either file or directory)
-	local function pathname(path)
-			local prefix = ""
-			local i = path:find("[\\/:][^\\/:]*$")
-			if i then
-					prefix = path:sub(1, i-1)
-			end
-			return prefix
-	end
-
 	-- Checks if provided directory contains git directory
 	local function has_git_dir(dir)
-			return clink.is_dir(dir..'/.git') and dir..'/.git'
+			local dir = joinPaths(dir, '.git')
+			return clink.is_dir(dir) and dir
 	end
 
 	local function has_git_file(dir)
-			local gitfile = io.open(dir..'/.git')
+			dotgit = joinPaths(dir, '.git')
+			local gitfile
+			if (clink.version_encoded or 0) >= 10010000 then
+				-- More efficient than unconditionally opening the file.
+				if os.isfile(dotgit) then
+					gitfile = io.open(dotgit)
+				end
+			else
+				gitfile = io.open(dotgit)
+			end
 			if not gitfile then return false end
 
 			local git_dir = gitfile:read():match('gitdir: (.*)')
@@ -342,8 +380,16 @@ function get_git_dir(path)
 
 			-- gitdir can (apparently) be absolute or relative:
 			local file_when_absolute = git_dir and clink.is_dir(git_dir) and git_dir
-			local file_when_relative = git_dir and clink.is_dir(dir..'/'..git_dir) and dir..'/'..git_dir
-			return (file_when_absolute or file_when_relative)
+			if file_when_absolute then
+				-- don't waste time calling clink.is_dir on a potentially
+				-- relative path if we already know it's an absolute path.
+				return file_when_absolute
+			end
+			local rel_dir = joinPaths(dir, git_dir)
+			local file_when_relative = git_dir and clink.is_dir(rel_dir) and rel_dir
+			if file_when_relative then
+				return file_when_relative
+			end
 	end
 
 	-- Set default path to current directory
@@ -351,12 +397,12 @@ function get_git_dir(path)
 
 	-- Calculate parent path now otherwise we won't be
 	-- able to do that inside of logical operator
-	local parent_path = pathname(path)
+	local parent_path = toParent(path)
 
 	return has_git_dir(path)
 			or has_git_file(path)
 			-- Otherwise go up one level and make a recursive call
-			or (parent_path ~= path and get_git_dir(parent_path) or nil)
+			or (parent_path ~= "" and get_git_dir(parent_path) or nil)
 end
 
 -- Register filters for resetting the prompt and closing it before and after all addons

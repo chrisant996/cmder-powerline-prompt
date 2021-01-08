@@ -1,22 +1,21 @@
 local segment_priority = plc_priority_npm or 60
 
 local function get_package_json_dir(path)
-  -- return parent path for specified entry (either file or directory)
-  local function pathname(path)
-          local prefix = ""
-          local postfix = ""
-          local i = path:find("[\\/:][^\\/:]*$")
-          if i then
-                  prefix = path:sub(1, i-1)
-
-          end
-          return prefix
-  end
-
   if not path or path == '.' then path = clink.get_cwd() end
 
-  local parent_path = pathname(path)
-  return io.open(path..'\\package.json') or (parent_path ~= path and get_package_json_dir(parent_path) or nil)
+  local json_file = joinPaths(path, 'package.json')
+  if (clink.version_encoded or 0) > 10010020 then
+    if os.isfile(json_file) then
+      return true
+    end
+  else
+    if io.open(json_file) then
+      return true
+    end
+  end
+
+  local parent_path = toParent(path)
+  return (parent_path ~= "" and get_package_json_dir(parent_path) or nil)
 end
 
 -- * Segment object with these properties:
