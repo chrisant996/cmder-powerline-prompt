@@ -1,21 +1,10 @@
 local segment_priority = plc_priority_npm or 60
 
-local function get_package_json_dir(path)
+local function get_package_json_file(path)
   if not path or path == '.' then path = clink.get_cwd() end
 
-  local json_file = joinPaths(path, 'package.json')
-  if (clink.version_encoded or 0) > 10010020 then
-    if os.isfile(json_file) then
-      return true
-    end
-  else
-    if io.open(json_file) then
-      return true
-    end
-  end
-
   local parent_path = toParent(path)
-  return (parent_path ~= "" and get_package_json_dir(parent_path) or nil)
+  return io.open(joinPaths(path, 'package.json')) or (parent_path ~= path and get_package_json_file(parent_path) or nil)
 end
 
 -- * Segment object with these properties:
@@ -34,7 +23,7 @@ local segment = {
 -- Sets the properties of the Segment object, and prepares for a segment to be added
 ---
 local function init()
-  segment.isNeeded = get_package_json_dir()
+  segment.isNeeded = get_package_json_file()
   if segment.isNeeded then
     local package_info = segment.isNeeded:read('*a')
     segment.isNeeded:close()
