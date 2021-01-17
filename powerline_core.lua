@@ -25,7 +25,7 @@
 
 -- In all 'addon' files:
 -- * Segment object with these properties:
----- * isNeeded: sepcifies whether a segment should be added or not. For example: no Git segment is needed in a non-git folder
+---- * isNeeded: specifies whether a segment should be added or not. For example: no Git segment is needed in a non-git folder
 ---- * text
 ---- * textColor: Use one of the color constants. Ex: colorWhite
 ---- * fillColor: Use one of the color constants. Ex: colorBlue
@@ -358,8 +358,8 @@ function get_git_dir(path)
 
 	-- Checks if provided directory contains git directory
 	local function has_git_dir(dir)
-			local dir = joinPaths(dir, '.git')
-			return clink.is_dir(dir) and dir
+			local dotgit = joinPaths(dir, '.git')
+			return clink.is_dir(dotgit) and dotgit
 	end
 
 	local function has_git_file(dir)

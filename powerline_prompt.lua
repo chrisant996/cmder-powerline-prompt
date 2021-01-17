@@ -86,7 +86,7 @@ local function init()
                 if git_dir then
                     -- get the root git folder name and reappend any part of the directory that comes after
                     -- Ex: C:\Users\username\cmder-powerline-prompt\innerdir -> cmder-powerline-prompt\innerdir
-                    local git_root_dir = git_dir:gsub("/.git", "")
+                    local git_root_dir = toParent(git_dir)
                     local appended_dir = string.sub(cwd, string.len(git_root_dir) + 1)
                     cwd = get_folder_name(git_root_dir)..appended_dir
                     if plc_prompt_gitSymbol then
