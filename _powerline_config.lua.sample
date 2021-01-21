@@ -18,6 +18,40 @@
 -- Copy _powerline_config.lua.sample to _powerline_config.lua and uncomment variables you want to set/change.
 
 
+-- Colors --------------------------------------------------------------------
+
+---- The following colors are configurable.  Colors must be expressed as
+---  tables that set foreground= and background= using use ANSI color escape
+---  codes.  The value should be the SGR parameters of the "ESC[...m" code.
+---  Both foreground and background colors are needed so the segment dividers
+---  can be displayed properly.
+
+--plc_date_segment_textColor = colorBlack
+--plc_date_segment_fillColor = colorBrightBlack
+
+--plc_prompt_segment_textColor = colorWhite
+--plc_prompt_segment_fillColor = colorBlue
+
+--plc_npm_segment_textColor = colorWhite
+--plc_npm_segment_fillColor = colorCyan
+
+--plc_git_clean_textColor = colorBlack
+--plc_git_clean_fillColor = colorGreen
+--plc_git_dirty_textColor = colorBlack
+--plc_git_dirty_fillColor = colorYellow
+--plc_git_conflict_textColor = colorBrightWhite
+--plc_git_conflict_fillColor = colorRed
+--plc_git_staged_textColor = colorBlack
+--plc_git_staged_fillColor = colorMagenta
+--plc_git_remote_textColor = colorBlack
+--plc_git_remote_fillColor = colorCyan
+
+--plc_hg_branch_textColor = colorBlack
+--plc_hg_branch_fillColor = colorGreen
+--plc_hg_dirty_textColor = colorWhite
+--plc_hg_dirty_fillColor = colorRed
+
+
 -- Behavior ------------------------------------------------------------------
 
 ---- NOTE: If the original %PROMPT% string starts with $+ then the cwd segment

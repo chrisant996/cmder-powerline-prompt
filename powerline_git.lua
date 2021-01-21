@@ -1,28 +1,16 @@
 local segment_priority = plc_priority_versionControl or 61
 
 -- Constants
-local segmentColors = {
-    clean = {
-        fill = colorGreen,
-        text = colorBlack
-    },
-    dirty = {
-        fill = colorYellow,
-        text = colorBlack
-    },
-    conflict = {
-        fill = colorRed,
-        text = colorBrightWhite
-    },
-    staged = {
-        fill = colorMagenta,
-        text = colorBlack
-    },
-    remote = {
-        fill = colorCyan,
-        text = colorBlack
-    }
-}
+plc_git_clean_textColor = colorBlack
+plc_git_clean_fillColor = colorGreen
+plc_git_dirty_textColor = colorBlack
+plc_git_dirty_fillColor = colorYellow
+plc_git_conflict_textColor = colorBrightWhite
+plc_git_conflict_fillColor = colorRed
+plc_git_staged_textColor = colorBlack
+plc_git_staged_fillColor = colorMagenta
+plc_git_remote_textColor = colorBlack
+plc_git_remote_fillColor = colorCyan
 
 ---
 -- Finds out the name of the current branch
@@ -191,17 +179,17 @@ local function init()
     local gitConflict = get_git_conflict()
     segment = {}
     segment.text = " "..plc_git_branchSymbol.." "..branch.." "
-    segment.textColor = segmentColors.clean.text
-    segment.fillColor = segmentColors.clean.fill
+    segment.textColor = plc_git_clean_textColor
+    segment.fillColor = plc_git_clean_fillColor
     if gitConflict then
-        segment.textColor = segmentColors.conflict.text
-        segment.fillColor = segmentColors.conflict.fill
+        segment.textColor = plc_git_conflict_textColor
+        segment.fillColor = plc_git_conflict_fillColor
         if plc_git_conflictSymbol and #plc_git_conflictSymbol then
             segment.text = segment.text..plc_git_conflictSymbol.." "
         end
     elseif gitStatus and gitStatus.working then
-        segment.textColor = segmentColors.dirty.text
-        segment.fillColor = segmentColors.dirty.fill
+        segment.textColor = plc_git_dirty_textColor
+        segment.fillColor = plc_git_dirty_fillColor
         segment.text = add_details(segment.text, gitStatus.working)
     end
     table.insert(segments, segment)
@@ -217,8 +205,8 @@ local function init()
         if plc_git_stagedSymbol and #plc_git_stagedSymbol then
             segment.text = segment.text..plc_git_stagedSymbol.." "
         end
-        segment.textColor = segmentColors.staged.text
-        segment.fillColor = segmentColors.staged.fill
+        segment.textColor = plc_git_staged_textColor
+        segment.fillColor = plc_git_staged_fillColor
         segment.text = add_details(segment.text, gitStatus.staged)
         table.insert(segments, segment)
     end
@@ -232,8 +220,8 @@ local function init()
             if plc_git_aheadbehindSymbol and #plc_git_aheadbehindSymbol > 0 then
                 segment.text = segment.text..plc_git_aheadbehindSymbol.." "
             end
-            segment.textColor = segmentColors.remote.text
-            segment.fillColor = segmentColors.remote.fill
+            segment.textColor = plc_git_remote_textColor
+            segment.fillColor = plc_git_remote_fillColor
             if ahead ~= "0" then
                 segment.text = segment.text..plc_git_aheadcountSymbol..ahead.." "
             end

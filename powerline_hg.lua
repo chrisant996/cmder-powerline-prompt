@@ -1,16 +1,10 @@
 local segment_priority = plc_priority_versionControl or 61
 
 -- Constants
-local segmentColors = {
-    branch = {
-        fill = colorGreen,
-        text = colorBlack
-    },
-    dirty = {
-        fill = colorRed,
-        text = colorWhite
-    }
-}
+plc_hg_branch_textColor = colorBlack
+plc_hg_branch_fillColor = colorGreen
+plc_hg_dirty_textColor = colorWhite
+plc_hg_dirty_fillColor = colorRed
 
 --- copied from clink.lua
  -- Resolves closest directory location for specified directory.
@@ -79,13 +73,13 @@ local function init()
         if branch ~= nil and
            string.sub(branch,1,7) ~= "abort: " and             -- not an HG working copy
            (not string.find(branch, "is not recognized")) then -- 'hg' not in path
-            table.insert(segments, {" " .. plc_git_branchSymbol .. " " .. branch .. " ", segmentColors.branch.text, segmentColors.branch.fill})
+            table.insert(segments, {" " .. plc_git_branchSymbol .. " " .. branch .. " ", plc_hg_branch_textColor, plc_hg_branch_fillColor})
             local pipe = io.popen("hg status -amrd 2>&1")
             local output = pipe:read('*all')
             local rc = { pipe:close() }
             if output ~= nil and output ~= "" then
                 -- Dirty segment
-                table.insert(segments, {" " .. plc_hg_changesSymbol .. " ",  segmentColors.dirty.text,  segmentColors.dirty.fill})
+                table.insert(segments, {" " .. plc_hg_changesSymbol .. " ",  plc_hg_dirty_textColor,  plc_hg_dirty_fillColor})
             end
         end
     end

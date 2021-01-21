@@ -1,5 +1,8 @@
 local segment_priority = plc_priority_npm or 60
 
+plc_npm_segment_textColor = colorWhite
+plc_npm_segment_fillColor = colorCyan
+
 local function get_package_json_file(path)
   if not path or path == '.' then path = clink.get_cwd() end
 
@@ -15,8 +18,8 @@ end
 local segment = {
   isNeeded = false,
   text = "",
-  textColor = colorWhite,
-  fillColor = colorCyan
+  textColor = nil,
+  fillColor = nil
 }
 
 ---
@@ -43,6 +46,9 @@ local function init()
     else
       segment.text = " "..package_name.."@"..package_version.." "
     end
+
+    segment.textColor = plc_npm_segment_textColor
+    segment.fillColor = plc_npm_segment_fillColor
   end
 end
 
