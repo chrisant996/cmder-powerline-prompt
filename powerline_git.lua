@@ -103,7 +103,7 @@ function git_ahead_behind_module()
     local file = io.popen("git rev-list --count --left-right @{upstream}...HEAD 2>nul")
     local ahead, behind = "0", "0"
     for line in file:lines() do
-        ahead, behind = string.match(line, "(%d+).+(%d+)")
+        ahead, behind = string.match(line, "(%d+)[^%d]+(%d+)")
     end
     file:close()
 
