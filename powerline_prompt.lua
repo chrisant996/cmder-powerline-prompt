@@ -13,6 +13,8 @@ local promptTypeFolder = "folder"
  -- "smart" to switch in git repo to folder name instead of full path
 local promptTypeSmart = "smart"
 
+local home = clink.get_env("HOMEDRIVE") .. clink.get_env("HOMEPATH")
+
  -- default is promptTypeSmart
  -- Set default value if no value is already set
 if not plc_prompt_type then
@@ -77,9 +79,9 @@ local function init()
     -- If a Git repo is active, it will only show the folder name
     -- This helps users avoid having a super long prompt
         local git_dir = get_git_dir()
-        if plc_prompt_useHomeSymbol and string.find(cwd, clink.get_env("HOME")) and git_dir ==nil then
+        if plc_prompt_useHomeSymbol and string.find(cwd, home) and git_dir ==nil then
             -- in both smart and full if we are in home, behave like a proper command line
-            cwd = string.gsub(cwd, clink.get_env("HOME"), plc_prompt_homeSymbol)
+            cwd = string.gsub(cwd, home, plc_prompt_homeSymbol)
         else
             -- either not in home or home not supported then check the smart path
             if plc_prompt_type == promptTypeSmart then
