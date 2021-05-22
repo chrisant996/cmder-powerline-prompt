@@ -42,7 +42,7 @@ then create a symbolic link from the `%CMDER_ROOT%/config` folder to the `.lua` 
 
 ```bat
 cd %CMDER_ROOT%/config  
-mklink /H powerline_core.lua <git-repo-folder-name>/powerline_core.lua
+mklink /H powerline.lua <git-repo-folder-name>/powerline.lua
 mklink /H powerline_prompt.lua <git-repo-folder-name>/powerline_prompt.lua
 ```
 
@@ -56,7 +56,7 @@ To add Configurations, create a file named `_powerline_config.lua` that is a cop
 
 To add symbolic links across drives (from C drive pointing to D drive, for example), use PowerShell instead of `mklink`.  
 ```powershell
-new-item -path powerline_core.lua -itemtype symboliclink -value <path to repo folder>\cmder-powerline-prompt\powerline_core.lua
+new-item -path powerline.lua -itemtype symboliclink -value <path to repo folder>\cmder-powerline-prompt\powerline.lua
 ```
 
 ## Configuration
@@ -101,4 +101,4 @@ This code is provided with the timeless **Works on my Machine** guarantee.
 # Writing an addon  
 This prompt uses an addon architecture to allow for additional functionality.  
 `powerline_prompt.lua` is a good example for how to write an addon. The code is annotated and explains how to write a new addon.  
-To write a new addon, create a new `lua` file in `%CMDER_ROOT%/config`. Start a new tab in Cmder to see the effect of changes.  
+To write a new addon, create a new `powerline_youraddon.lua` file in `%CMDER_ROOT%/config`. Start a new tab in Cmder to see the effect of changes.  

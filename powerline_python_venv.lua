@@ -1,3 +1,8 @@
+plc_python = {}
+plc_python.priority = 60
+plc_python.textColor = colorWhite
+plc_python.fillColor = colorCyan
+
 ---
  -- get the virtual env variable
 ---
@@ -31,55 +36,42 @@ local function get_py_files(path)
         return getN
     end
 
-    dir = toParent(path)
+    dir = plc.toParent(path)
 
     files = has_py_files(dir) > 0
     return files
 end
 
--- * Segment object with these properties:
----- * isNeeded: sepcifies whether a segment should be added or not. For example: no Git segment is needed in a non-git folder
----- * text
----- * textColor: Use one of the color constants. Ex: colorWhite
----- * fillColor: Use one of the color constants. Ex: colorBlue
-local segment = {
-    isNeeded = false,
-    text = "",
-    textColor = colorWhite,
-    fillColor = colorCyan
-}
 ---
--- Sets the properties of the Segment object, and prepares for a segment to be added
+-- Builds the segment content.
 ---
 local function init()
+    local venv
     if plc_python_virtualEnvVariable then
-        segment.isNeeded = get_virtual_env(plc_python_virtualEnvVariable)
+        venv = get_virtual_env(plc_python_virtualEnvVariable)
     else
-        segment.isNeeded = get_virtual_env()
-	end
-	if not segment.isNeeded then
-		-- return early to avoid wasting time by calling get_py_files()!
-		return
-	end
+        venv = get_virtual_env()
+    end
+    if not venv then
+        -- return early to avoid wasting time by calling get_py_files()!
+        return
+    end
 
-	if not plc_python_alwaysShow and not get_py_files() then
-		segment.isNeeded = false
-		return
-	end
+    if not plc_python_alwaysShow and not get_py_files() then
+        return
+    end
 
+    local text
     if plc_python_pythonSymbol then
-        segment.text = " "..plc_python_pythonSymbol.." ["..segment.isNeeded.."] "
+        text = " "..plc_python_pythonSymbol.." ["..venv.."] "
     else
-        segment.text = " ["..segment.isNeeded.."] "
+        text = " ["..venv.."] "
     end
+
+    plc.addSegment(text, plc_python.textColor, plc_python.fillColor)
 end
 
-local function addAddonSegment()
-    init()
-    if segment.isNeeded then
-        addSegment(segment.text, segment.textColor, segment.fillColor)
-    end
-end
-
--- register the filters
-clink.prompt.register_filter(addAddonSegment, 60)
+---
+-- Register this addon with Clink
+---
+plc.add_module(init, plc_python)
