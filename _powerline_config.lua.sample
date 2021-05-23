@@ -188,12 +188,12 @@
 --plc_git_addcountSymbol = "+"
 --plc_git_modifycountSymbol = "*"
 --plc_git_deletecountSymbol = "-"
---plc_git_renamecountSymbol = "🎃"
+--plc_git_renamecountSymbol = "🎃" -- Pumpkin emoji, if your font has it.
 --plc_git_summarycountSymbol = "±"
 --plc_git_untrackedcountSymbol = "?"
 
 ---- Symbols for git ahead/behind segment.
---plc_git_aheadbehindSymbol = "☁"
+--plc_git_aheadbehindSymbol = "☁" -- Cloud emoji, if your font has it.
 --plc_git_aheadcountSymbol = "↓"
 --plc_git_behindcountSymbol = "↑"
 
@@ -211,8 +211,7 @@
 --plc_hg.dirty_fillColor = colorRed
 
 ---- Hg changes symbol. Used to indicate there are changes.
----- You can use "  " conflict symbol with 'Anonymous Powerline' font.
---plc_hg_changesSymbol = ""
+--plc_hg_changesSymbol = "" -- In the 'Anonymous Powerline' font this is an icon of a page with a "plus" sign on it.
 
 
 -- NPM module -------------------------------------------------------------
