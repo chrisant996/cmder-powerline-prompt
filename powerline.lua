@@ -178,16 +178,16 @@ plc_git_branchSymbol = plc_git_branchSymbol or ""
 -- Version control (e.g. Git) conflict symbol. Used to indicate there's a conflict.
 plc_git_conflictSymbol = plc_git_conflictSymbol or "!"
 -- Version control (e.g. Hg) changes symbol. Used to indicate there's a change.
-plc_hg_changesSymbol = plc_hg_changesSymbol or ""
+plc_hg_changesSymbol = plc_hg_changesSymbol or "*"
 
 plc_git_addcountSymbol = plc_git_addcountSymbol or "+"
 plc_git_modifycountSymbol = plc_git_modifycountSymbol or "*"
 plc_git_deletecountSymbol = plc_git_deletecountSymbol or "-"
-plc_git_renamecountSymbol = plc_git_renamecountSymbol or "🎃"
+plc_git_renamecountSymbol = plc_git_renamecountSymbol or "" -- Empty string counts renamed as modified.
 plc_git_summarycountSymbol = plc_git_summarycountSymbol or "±"
 plc_git_untrackedcountSymbol = plc_git_untrackedcountSymbol or "?"
 
-plc_git_aheadbehindSymbol = plc_git_aheadbehindSymbol or "☁"
+plc_git_aheadbehindSymbol = plc_git_aheadbehindSymbol or "" -- Optional symbol preceding the ahead/behind counts.
 plc_git_aheadcountSymbol = plc_git_aheadcountSymbol or "↓"
 plc_git_behindcountSymbol = plc_git_behindcountSymbol or "↑"
 
