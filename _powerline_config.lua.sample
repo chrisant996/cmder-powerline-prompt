@@ -189,6 +189,7 @@
 --plc_git_modifycountSymbol = "*"
 --plc_git_deletecountSymbol = "-"
 --plc_git_renamecountSymbol = "🎃" -- Pumpkin emoji, if your font has it.
+--plc_git_renamecountSymbol = "" -- An empty string counts renamed files as modified.
 --plc_git_summarycountSymbol = "±"
 --plc_git_untrackedcountSymbol = "?"
 

@@ -69,6 +69,11 @@ local function get_git_status()
     end
     file:close()
 
+    if plc_git_renamecountSymbol == "" then
+        s_mod = s_mod + s_ren
+        s_ren = 0
+    end
+
     local working
     local staged
 
