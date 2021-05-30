@@ -180,9 +180,12 @@ local function init()
     -- Local status
     local gitStatus = get_git_status()
     local gitConflict = get_git_conflict()
-    local text = " "..plc_git_branchSymbol.." "..branch.." "
+    local text = " "..branch.." "
     local textColor = plc_git.clean_textColor
     local fillColor = plc_git.clean_fillColor
+    if not plc_simple then
+        text = " "..plc_git_branchSymbol..text
+    end
     if gitConflict then
         textColor = plc_git.conflict_textColor
         fillColor = plc_git.conflict_fillColor

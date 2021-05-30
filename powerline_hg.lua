@@ -72,7 +72,11 @@ local function init()
                 string.sub(branch,1,7) ~= "abort: " and             -- not an HG working copy
                 (not string.find(branch, "is not recognized")) then -- 'hg' not in path
             -- Branch segment
-            plc.addSegment(" " .. plc_git_branchSymbol .. " " .. branch .. " ", plc_hg.branch_textColor, plc_hg.branch_fillColor)
+            local text = " " .. branch .. " "
+			if not plc_simple then
+                text = " " .. plc_git_branchSymbol .. text
+			end
+            plc.addSegment(text, plc_hg.branch_textColor, plc_hg.branch_fillColor)
 
             -- Dirty segment
             local pipe = io.popen("hg status -amrd 2>&1")
