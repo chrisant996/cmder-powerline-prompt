@@ -13,6 +13,10 @@ In the screenshot, [Fira Code](https://github.com/tonsky/FiraCode) font is used.
 
 The look is inspired by [Powerline for Vim](https://github.com/powerline/powerline), and [Zsh's theme agnoster](https://github.com/agnoster/agnoster-zsh-theme).
 
+> **Git prompt is always fast!** Clink v1.2.10 and higher support refreshing the prompt while editing the input line, and the git prompt is now able to collect status in the background so that the prompt never gets stuck waiting in large git repos.
+
+> **Config file breaking change notice:** Recent major improvements require some changes in your `_powerline_config.lua` file.  See the `_powerline_config.lua.sample` file for details.
+
 # Requirements
 
 Download the [AnonymousPro font](https://github.com/powerline/fonts/tree/master/AnonymousPro).  
