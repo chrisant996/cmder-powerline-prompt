@@ -1,5 +1,6 @@
 plc_date = {}
 plc_date.priority = plc_priority_start + 2
+plc_date.allow_refresh = false -- false keeps the date/time from changing until the next input line.
 
 plc_date.textColor = colorBlack
 plc_date.fillColor = colorBrightBlack
@@ -38,16 +39,19 @@ function plc_build_date_prompt(prompt)
 		end
 	end
 
+	local date_text = (not plc_date.allow_refresh and plc.cached_state.date_text) or os.date(date_format)
+	plc.cached_state.date_text = date_text
+
 	if plc_date_position == "above" then
 		if batteryStatus ~= "" then
 			batteryStatus = plc_colorize_battery_status(batteryStatus.."  ", level)
 		end
-		return batteryStatus..plc_colorize_date_above(os.date(date_format))..newLineSymbol..prompt
+		return batteryStatus..plc_colorize_date_above(date_text)..newLineSymbol..prompt
 	else
 		if batteryStatus ~= "" then
 			batteryStatus = plc_colorize_battery_status(" "..batteryStatus.." ", level, plc_date.textColor, plc_date.fillColor)
 		end
-		return plc.addSegment(batteryStatus.." "..os.date(date_format).." ", plc_date.textColor, plc_date.fillColor, (plc_date_position == "right"))
+		return plc.addSegment(batteryStatus.." "..date_text.." ", plc_date.textColor, plc_date.fillColor, (plc_date_position == "right"))
 	end
 end
 

@@ -1,5 +1,7 @@
 plc_battery = {}
 plc_battery.priority = plc_priority_start + 1
+plc_battery.idle_refresh = true
+plc_battery.refresh_interval = 15
 
 ---
 -- Also called from powerline_date.lua
@@ -105,6 +107,17 @@ function plc_colorize_battery_status(status, level, textRestoreColor, fillRestor
 	return levelColor..status..resetColor
 end
 
+local prev_status, prev_level
+local function update_battery_prompt()
+	while true do
+		local status,level = plc_get_battery_status()
+		if prev_status ~= status or prev_level ~= level then
+			clink.refilterprompt()
+		end
+		coroutine.yield()
+	end
+end
+
 ---
 -- Builds the segment content.
 ---
@@ -114,6 +127,15 @@ local function init()
 	end
 
 	local batteryStatus,level = plc_get_battery_status()
+	prev_status = batteryStatus
+	prev_level = level
+
+	if clink.addcoroutine and plc_battery.idle_refresh and not plc.cached_state.battery_coroutine then
+		local t = coroutine.create(update_battery_prompt)
+		plc.cached_state.battery_coroutine = t
+		clink.addcoroutine(t, plc_battery.refresh_interval)
+	end
+
 	if not batteryStatus or batteryStatus == "" or level > plc_battery_showLevel then
 		return
 	end

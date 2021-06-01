@@ -2,6 +2,8 @@ plc_versionControl = plc_versionControl or {}
 plc_versionControl.priority = plc_versionControl.priority or 61
 
 plc_git = {}
+plc_git.unknown_textColor = colorBlack
+plc_git.unknown_fillColor = colorWhite
 plc_git.clean_textColor = colorBlack
 plc_git.clean_fillColor = colorGreen
 plc_git.dirty_textColor = colorBlack
@@ -12,6 +14,17 @@ plc_git.staged_textColor = colorBlack
 plc_git.staged_fillColor = colorMagenta
 plc_git.remote_textColor = colorBlack
 plc_git.remote_fillColor = colorCyan
+
+local use_coroutines = clink.promptcoroutine and true or false
+
+local io_popenyield_maybe = use_coroutines and io.popenyield or io.popen
+local function clink_promptcoroutine(func)
+    if use_coroutines then
+        return clink.promptcoroutine(func)
+    else
+        return func()
+    end
+end
 
 ---
 -- Finds out the name of the current branch
@@ -40,7 +53,7 @@ end
 -- @return nil for clean, or a table with dirty counts.
 ---
 local function get_git_status()
-    local file = io.popen("git --no-optional-locks status --porcelain 2>nul")
+    local file = io_popenyield_maybe("git --no-optional-locks status --porcelain 2>nul")
     local w_add, w_mod, w_del, w_unt = 0, 0, 0, 0
     local s_add, s_mod, s_del, s_ren = 0, 0, 0, 0
 
@@ -106,7 +119,7 @@ end
 -- Gets the number of commits ahead/behind from upstream.
 ---
 local function git_ahead_behind_module()
-    local file = io.popen("git rev-list --count --left-right @{upstream}...HEAD 2>nul")
+    local file = io_popenyield_maybe("git rev-list --count --left-right @{upstream}...HEAD 2>nul")
     local ahead, behind = "0", "0"
     for line in file:lines() do
         ahead, behind = string.match(line, "(%d+)[^%d]+(%d+)")
@@ -121,7 +134,7 @@ end
 -- @return {bool} indicating true for conflict, false for no conflicts
 ---
 local function get_git_conflict()
-    local file = io.popen("git diff --name-only --diff-filter=U 2>nul")
+    local file = io_popenyield_maybe("git diff --name-only --diff-filter=U 2>nul")
     for line in file:lines() do
         file:close()
         return true;
@@ -165,8 +178,19 @@ local function add_details(text, details)
 end
 
 ---
+-- Coroutine to make prompt more responsive.
+---
+local function collect_git_info()
+    local status = get_git_status()
+    local conflict = get_git_conflict()
+    local ahead, behind = git_ahead_behind_module()
+    return { status=status, conflict=conflict, ahead=ahead, behind=behind, finished=true }
+end
+
+---
 -- Builds the segments.
 ---
+local cached_info = {}
 local function init()
     if not plc.get_git_dir() then
         return
@@ -177,9 +201,27 @@ local function init()
         return
     end
 
+    -- Discard cached info if from a different repro or branch.
+    if cached_info.git_dir ~= git_dir or cached_info.git_branch ~= branch then
+        cached_info = {}
+        cached_info.git_dir = git_dir
+        cached_info.git_branch = branch
+    end
+
+    -- Use coroutine if supported, otherwise run directly.
+    local info = clink_promptcoroutine(collect_git_info)
+
+    -- Use cached info until coroutine is finished.
+    if not info then
+        info = cached_info.git_info or {}
+    else
+        cached_info.git_info = info
+    end
+
     -- Local status
-    local gitStatus = get_git_status()
-    local gitConflict = get_git_conflict()
+    local gitStatus = info.status
+    local gitConflict = info.conflict
+    local gitUnknown = not info.finished
     local text = " "..branch.." "
     local textColor = plc_git.clean_textColor
     local fillColor = plc_git.clean_fillColor
@@ -196,6 +238,9 @@ local function init()
         textColor = plc_git.dirty_textColor
         fillColor = plc_git.dirty_fillColor
         text = add_details(text, gitStatus.working)
+    elseif gitUnknown then
+        textColor = plc_git.unknown_textColor
+        fillColor = plc_git.unknown_fillColor
     end
     plc.addSegment(text, textColor, fillColor)
 
@@ -217,7 +262,8 @@ local function init()
 
     -- Remote status (ahead/behind)
     if plc_git_aheadbehind then
-        local ahead,behind = git_ahead_behind_module()
+        local ahead = info.ahead or "0"
+        local behind = info.behind or "0"
         if ahead ~= "0" or behind ~= "0" then
             text = " "
             if plc_git_aheadbehindSymbol and #plc_git_aheadbehindSymbol > 0 then

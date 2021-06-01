@@ -480,6 +480,7 @@ if (clink.version_encoded or 0) >= 10020005 then
 			end
 		end
 		plc._install = {}
+		plc.cached_state = {}
 	end
 	clink.onbeginedit(install_segments)
 

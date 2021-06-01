@@ -73,9 +73,9 @@ local function init()
                 (not string.find(branch, "is not recognized")) then -- 'hg' not in path
             -- Branch segment
             local text = " " .. branch .. " "
-			if not plc_simple then
+            if not plc_simple then
                 text = " " .. plc_git_branchSymbol .. text
-			end
+            end
             plc.addSegment(text, plc_hg.branch_textColor, plc_hg.branch_fillColor)
 
             -- Dirty segment
