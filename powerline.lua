@@ -210,6 +210,7 @@ function plc.bookend_priority(prio)
 		return prio
 	end
 end
+bookend_priority = plc.bookend_priority -- backward compatibility
 
 ---
 -- Adds an arrow symbol to the input text with the correct colors
@@ -234,6 +235,7 @@ function plc.addArrow(text, oldColor, newColor, right)
 	plc_lastArrow_len = #text - old_len
 	return text
 end
+addArrow = plc.addArrow -- backward compatibility
 
 ---
 -- Adds text to the input text with the correct colors
@@ -248,6 +250,7 @@ function plc.addTextWithColor(text, textToAdd, textColor, fillColor)
 	local fillColorValue = plc_simple and colorDefault.background or fillColor.background
 	return text..ansiEscChar.."[0;"..textColorValue..";"..fillColorValue.."m"..textToAdd..ansiEscChar.."[0m"
 end
+addTextWithColor = plc.addTextWithColor -- backward compatibility
 
 ---
 -- Adds a new segment to the prompt with the specified colors.
@@ -272,6 +275,7 @@ function plc.addSegment(text, textColor, fillColor, right)
 		table.insert(leftSegments, {text, textColor, fillColor})
 	end
 end
+addSegment = plc.addSegment -- backward compatibility
 
 ---
 -- Gets the parent directory for specified entry (either file or directory),
@@ -286,6 +290,7 @@ function plc.toParent(dir)
 	end
 	return prefix
 end
+toParent = plc.toParent -- backward compatibility
 
 ---
 -- Joins path components.
@@ -293,6 +298,7 @@ end
 function plc.joinPaths(lhs, rhs)
 	return path.join(lhs, rhs)
 end
+joinPaths = plc.joinPaths -- backward compatibility
 
 ---
 -- Gets the .git directory.
@@ -345,6 +351,7 @@ function plc.get_git_dir(path)
 			-- Otherwise go up one level and make a recursive call
 			or (parent_path ~= "" and plc.get_git_dir(parent_path) or nil)
 end
+get_git_dir = plc.get_git_dir -- backward compatibility
 
 ---
 -- Build the string of left-justified segments.
