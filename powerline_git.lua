@@ -192,7 +192,8 @@ end
 ---
 local cached_info = {}
 local function init()
-    if not plc.get_git_dir() then
+    local git_dir = plc.get_git_dir()
+    if not git_dir then
         return
     end
 
@@ -202,7 +203,7 @@ local function init()
     end
 
     -- Discard cached info if from a different repro or branch.
-    if cached_info.git_dir ~= git_dir or cached_info.git_branch ~= branch then
+    if (cached_info.git_dir ~= git_dir) or (cached_info.git_branch ~= branch) then
         cached_info = {}
         cached_info.git_dir = git_dir
         cached_info.git_branch = branch
