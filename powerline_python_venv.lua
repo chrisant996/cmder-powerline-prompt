@@ -47,8 +47,8 @@ end
 ---
 local function init()
     local venv
-    if plc_python_virtualEnvVariable then
-        venv = get_virtual_env(plc_python_virtualEnvVariable)
+    if plc_python.virtualEnvVariable then
+        venv = get_virtual_env(plc_python.virtualEnvVariable)
     else
         venv = get_virtual_env()
     end
@@ -57,13 +57,13 @@ local function init()
         return
     end
 
-    if not plc_python_alwaysShow and not get_py_files() then
+    if not plc_python.alwaysShow and not get_py_files() then
         return
     end
 
     local text
-    if plc_python_pythonSymbol then
-        text = " "..plc_python_pythonSymbol.." ["..venv.."] "
+    if plc_python.pythonSymbol then
+        text = " "..plc_python.pythonSymbol.." ["..venv.."] "
     else
         text = " ["..venv.."] "
     end
@@ -74,4 +74,4 @@ end
 ---
 -- Register this addon with Clink
 ---
-plc.add_module(init, plc_python)
+plc.addModule(init, plc_python)

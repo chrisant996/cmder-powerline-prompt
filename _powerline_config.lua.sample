@@ -1,20 +1,19 @@
-----------------
+------------------------------------------------------------------------------
 -- CONFIGURATION
-----------------
+--
 -- Config file is "_powerline_config.lua".
 -- Sample config file is "_powerline_config.lua.sample".
 --
--- Configurations are stored as variables.
--- Each variable is usually named in this pattern:
---   plc_<addon>_<property>
+-- Each module stores configuration variables as fields a table, such as:
+--   plc_<addon>.<property> = <value>
 -- Where 'plc' is short for 'powerline config'.
--- Ex: plc_prompt_type is a variable for the prompt addon for specifying
+-- Ex: plc_prompt.type is a config variable for the prompt addon for specifying
 -- the type of prompt to show.
 
 
----------------------------
+------------------------------------------------------------------------------
 -- HOW TO SET CONFIG VALUES
----------------------------
+--
 -- Always keep the _powerline_config.lua.sample file to restore to if your
 -- config got messed up.
 --
@@ -28,7 +27,8 @@
 -- for more info on colors.
 
 
--- GENERAL ----------------------------------------------------------------
+------------------------------------------------------------------------------
+-- GENERAL
 
 ---- Whether to use "simple" mode:
 ----  * Applies segment background color to foreground.
@@ -36,53 +36,55 @@
 ----  * Uses spaces instead of fancy segment separators.
 ----  * Ends the prompt with a simple character (vs a segment separator).
 --plc_simple = false
---plc_prompt_simpleClose = ">"
+--plc_prompt.simpleClose = ">"          -- Symbol for end of simple prompt.
 
----- Whether to add plc_prompt_lambSymbol on a new line under the prompt.
+---- Whether to add plc_prompt.lambSymbol on a new line under the prompt.
 ---- Use true or false.
 ---- Default is true.
---plc_prompt_useLambSymbol = false
+--plc_prompt.useLambSymbol = false
 
 ---- Symbol displayed in the new line below the prompt when
----- plc_prompt_lambSymbol is true.
---plc_prompt_lambSymbol = "λ"
+---- plc_prompt.lambSymbol is true.
+--plc_prompt.lambSymbol = "λ"
 
----- Colors for plc_prompt_lambSymbol.
+---- Colors for plc_prompt.lambSymbol.
 ---- Use the ANSI Fg and Bg colors from powerline.lua.
 --plc_prompt.lambTextColor = ansiFgBold
 --plc_prompt.lambFillColor = ansiBgClrDefault
 
----- Symbol connecting each segment of the prompt.  Be careful when
----- changing this.
---plc_prompt_arrowSymbol = ""
---plc_prompt_leftArrowSymbol = ""
+---- Symbol connecting each segment of the prompt.
+--plc_prompt.leftJustSegmentSymbol =  "" -- round "" -- downslant "" -- upslant ""
+--plc_prompt.leftJustDividerSymbol =  "" -- round "" -- downslant "" -- upslant ""
+--plc_prompt.rightJustSegmentSymbol = "" -- round "" -- downslant "" -- upslant ""
+--plc_prompt.rightJustDividerSymbol = "" -- round "" -- downslant "" -- upslant ""
 
 ---- Version control (git, hg, etc) branch symbol.  Used to indicate the
 ---- name of a branch.
---plc_git_branchSymbol = ""
+--plc_versionControl.branchSymbol = ""
 
 ---- Version control (git, hg, etc) conflict symbol. Used to indicate
 ---- there's a conflict.
---plc_git_conflictSymbol = "!"
+--plc_git.conflictSymbol = "!"
 
 
--- CWD PROMPT module ------------------------------------------------------
+------------------------------------------------------------------------------
+-- CWD PROMPT module
 
 ---- NOTE:  If the original %PROMPT% string starts with $+ then the cwd
----- segment includes the "+" signs corresponding to the pushd stack depth.
+---- segment includes "+" signs corresponding to the pushd stack depth.
 
 ---- Whether the displayed prompt is the full path or only the folder name.
 ---- Use:
 ----   "full" for full path like C:\Windows\System32.
 ----   "folder" for folder name only like System32.
-----   "smart" to switch in git repo to folder name instead of full path.
+----   "smart" to switch in git repo to repo-relative path instead of full path.
 ---- Default is "smart".
---plc_prompt_type = "full"
+--plc_prompt.type = "full"
 
 ---- Whether to show ~ instead of the full path to the user's home folder.
 ---- Default is true and "~".
---plc_prompt_useHomeSymbol = false
---plc_prompt_homeSymbol = "~"
+--plc_prompt.useHomeSymbol = false
+--plc_prompt.homeSymbol = "~"
 
 ---- Colors for the cwd prompt segment.
 ---- Use the colorBlack, colorRed, etc colors from powerline.lua.
@@ -90,7 +92,8 @@
 --plc_prompt.fillColor = colorBlue
 
 
--- BATTERY module ---------------------------------------------------------
+------------------------------------------------------------------------------
+-- BATTERY module
 
 ---- NOTE:  When the terminal supports extended Xterm color escape codes,
 ---- the battery module automatically represents the battery level with a
@@ -100,34 +103,35 @@
 ---- When false, the battery level indicator is colored according to the charge level.
 ---- Use true or false.
 ---- Default is false.
---plc_battery_withDate = true
+--plc_battery.withDate = true
 
 ---- Hide the battery segment above this charge level.
 ---- Use nil, or 1 to 100.
 ---- nil never shows the battery level (and doesn't even get the battery level).
 ---- 100 always shows the battery level.
 ---- Default is nil.
---plc_battery_showLevel = 100
+--plc_battery.showLevel = 100
 
 ---- Battery low level (use red color).
 ---- Use 1 to 100.
 ---- Default is 20.
---plc_battery_lowLevel = 10
+--plc_battery.lowLevel = 10
 
 ---- Battery medium level (use yellow color).
 ---- Use 1 to 100.
 ---- Default is 40.
---plc_battery_mediumLevel = 25
+--plc_battery.mediumLevel = 25
 
 ---- Symbol for battery level.
---plc_battery_levelSymbol = "%"
+--plc_battery.levelSymbol = "%"
 
 ---- Symbol for battery charging indicator.
---plc_battery_chargingSymbol = "⚡" -- Unicode "high voltage" character (the default).
---plc_battery_chargingSymbol = "" -- Charging indicator in 'Anonymous Powerline' font.
+--plc_battery.chargingSymbol = "⚡" -- Unicode "high voltage" character (the default).
+--plc_battery.chargingSymbol = "" -- Charging indicator in 'Anonymous Powerline' font.
 
 
--- DATE module ------------------------------------------------------------
+------------------------------------------------------------------------------
+-- DATE module
 
 ---- Where (and whether) to show the date.
 ---- Use:
@@ -136,13 +140,13 @@
 ----   "normal" to show the date in a normal segment.
 ----   nil to not show the date.
 ---- Default is nil.
---plc_date_position = "normal"
+--plc_date.position = "normal"
 
 ---- The date format to use.
 ---- Refer to https://www.lua.org/pil/22.1.html for references.
----- Default is "%a %x  %X" when plc_date_position is "above".
----- Default is "%a %H:%M" when plc_date_position is "normal" or "right".
---plc_date_format = "%A %B %d, %Y  %I:%M %p"
+---- Default is "%a %x  %X" when plc_date.position is "above".
+---- Default is "%a %H:%M" when plc_date.position is "normal" or "right".
+--plc_date.format = "%A %B %d, %Y  %I:%M %p"
 
 ---- Colors for the date segment, except when position is "above".
 ---- Use the colorBlack, colorRed, etc colors from powerline.lua.
@@ -154,22 +158,23 @@
 --plc_date.above_fillColor = colorDefault
 
 
--- GIT module -------------------------------------------------------------
+------------------------------------------------------------------------------
+-- GIT module
 
 ---- Whether to show detailed operation counts in the git prompt.
 ---- Use true or false.
 ---- Default is false.
---plc_git_status_details = true
+--plc_git.status_details = true
 
 ---- Whether to include summary of staged files. This is usually fast.
 ---- Use true or false.
 ---- Default is true.
---plc_git_staged = false
+--plc_git.staged = false
 
 ---- Whether to include summary of ahead/behind commits. This can take some time to compute.
 ---- Use true or false.
 ---- Default is false.
---plc_git_aheadbehind = true
+--plc_git.aheadbehind = true
 
 ---- Colors for the git segment.
 ---- Use the colorBlack, colorRed, etc colors from powerline.lua.
@@ -185,24 +190,25 @@
 --plc_git.remote_fillColor = colorCyan
 
 ---- Symbols for git local status.
---plc_git_addcountSymbol = "+"
---plc_git_modifycountSymbol = "*"
---plc_git_deletecountSymbol = "-"
---plc_git_renamecountSymbol = "🎃" -- Pumpkin emoji, if your font has it.
---plc_git_renamecountSymbol = "" -- An empty string counts renamed files as modified.
---plc_git_summarycountSymbol = "±"
---plc_git_untrackedcountSymbol = "?"
+--plc_git.addcountSymbol = "+"
+--plc_git.modifycountSymbol = "*"
+--plc_git.deletecountSymbol = "-"
+--plc_git.renamecountSymbol = "🎃" -- Pumpkin emoji, if your font has it.
+--plc_git.renamecountSymbol = "" -- An empty string counts renamed files as modified.
+--plc_git.summarycountSymbol = "±"
+--plc_git.untrackedcountSymbol = "?"
 
 ---- Symbols for git ahead/behind segment.
---plc_git_aheadbehindSymbol = "☁" -- Cloud emoji, if your font has it.
---plc_git_aheadcountSymbol = "↓"
---plc_git_behindcountSymbol = "↑"
+--plc_git.aheadbehindSymbol = "☁" -- Cloud emoji, if your font has it.
+--plc_git.aheadcountSymbol = "↓"
+--plc_git.behindcountSymbol = "↑"
 
 ---- Symbol for git staged segment.
---plc_git_stagedSymbol = "↗"
+--plc_git.stagedSymbol = "↗"
 
 
--- HG (MERCURIAL) module --------------------------------------------------
+------------------------------------------------------------------------------
+-- HG (MERCURIAL) module
 
 ---- Colors for the HG segment.
 ---- Use the colorBlack, colorRed, etc colors from powerline.lua.
@@ -212,10 +218,11 @@
 --plc_hg.dirty_fillColor = colorRed
 
 ---- Hg changes symbol. Used to indicate there are changes.
---plc_hg_changesSymbol = "" -- In the 'Anonymous Powerline' font this is an icon of a page with a "plus" sign on it.
+--plc_hg.changesSymbol = "" -- In the 'Anonymous Powerline' font this is an icon of a page with a "plus" sign on it.
 
 
--- NPM module -------------------------------------------------------------
+------------------------------------------------------------------------------
+-- NPM module
 
 ---- Colors for the NPM segment.
 ---- Use the colorBlack, colorRed, etc colors from powerline.lua.
@@ -223,10 +230,11 @@
 --plc_npm.fillColor = colorCyan
 
 ---- Symbol used in the NPM segment as visual indicator.
---plc_npm_npmSymbol = "NPM"
+--plc_npm.npmSymbol = "NPM"
 
 
--- MAVEN module -----------------------------------------------------------
+------------------------------------------------------------------------------
+-- MAVEN module
 
 ---- Colors for the MAVEN segment.
 ---- Use the colorBlack, colorRed, etc colors from powerline.lua.
@@ -234,10 +242,11 @@
 --plc_maven.fillColor = colorCyan
 
 ---- Symbol used in the maven segment as visual indicator.
---plc_mvn_mvnSymbol = "MVN"
+--plc_maven.mavenSymbol = "MVN"
 
 
--- PYTHON module ----------------------------------------------------------
+------------------------------------------------------------------------------
+-- PYTHON module
 
 ---- Colors for the PYTHON segment.
 ---- Use the colorBlack, colorRed, etc colors from powerline.lua.
@@ -245,8 +254,8 @@
 --plc_python.fillColor = colorCyan
 
 ---- Whether to always show python virtual env, or only in directories which contain a .py file.
---plc_python_alwaysShow = false
+--plc_python.alwaysShow = false
 
 ---- Symbol used in the Python segment as visual indicator.
---plc_python_pythonSymbol = ""
+--plc_python.pythonSymbol = ""
 

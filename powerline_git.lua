@@ -1,5 +1,6 @@
 plc_versionControl = plc_versionControl or {}
 plc_versionControl.priority = plc_versionControl.priority or 61
+plc_versionControl.branchSymbol = plc_versionControl.branchSymbol or ""
 
 plc_git = {}
 plc_git.unknown_textColor = colorBlack
@@ -15,8 +16,25 @@ plc_git.staged_fillColor = colorMagenta
 plc_git.remote_textColor = colorBlack
 plc_git.remote_fillColor = colorCyan
 
-local use_coroutines = clink.promptcoroutine and true or false
+plc_git.conflictSymbol = "!"
 
+plc_git.addcountSymbol = "+"
+plc_git.modifycountSymbol = "*"
+plc_git.deletecountSymbol = "-"
+plc_git.renamecountSymbol = ""          -- Empty string counts renamed as modified.
+plc_git.summarycountSymbol = "±"
+plc_git.untrackedcountSymbol = "?"
+
+plc_git.aheadbehindSymbol = ""          -- Optional symbol preceding the ahead/behind counts.
+plc_git.aheadcountSymbol = "↓"
+plc_git.behindcountSymbol = "↑"
+
+plc_git.stagedSymbol = "↗"
+
+---
+-- Support async prompt filtering when available.
+---
+local use_coroutines = clink.promptcoroutine and true or false
 local io_popenyield_maybe = use_coroutines and io.popenyield or io.popen
 local function clink_promptcoroutine(func)
     if use_coroutines then
@@ -82,7 +100,7 @@ local function get_git_status()
     end
     file:close()
 
-    if plc_git_renamecountSymbol == "" then
+    if plc_git.renamecountSymbol == "" then
         s_mod = s_mod + s_ren
         s_ren = 0
     end
@@ -151,28 +169,28 @@ local segments = {}
 
 ---
 -- Add status details to the segment text.
--- Depending on plc_git_status_details this may show verbose counts for
+-- Depending on plc_git.status_details this may show verbose counts for
 -- operations, or a concise overall count.
 ---
 local function add_details(text, details)
-    if plc_git_status_details then
+    if plc_git.status_details then
         if details.add > 0 then
-            text = text..plc_git_addcountSymbol..details.add.." "
+            text = text..plc_git.addcountSymbol..details.add.." "
         end
         if details.modify > 0 then
-            text = text..plc_git_modifycountSymbol..details.modify.." "
+            text = text..plc_git.modifycountSymbol..details.modify.." "
         end
         if details.delete > 0 then
-            text = text..plc_git_deletecountSymbol..details.delete.." "
+            text = text..plc_git.deletecountSymbol..details.delete.." "
         end
         if (details.rename or 0) > 0 then
-            text = text..plc_git_renamecountSymbol..details.rename.." "
+            text = text..plc_git.renamecountSymbol..details.rename.." "
         end
     else
-        text = text..plc_git_summarycountSymbol..(details.add + details.modify + details.delete + (details.rename or 0)).." "
+        text = text..plc_git.summarycountSymbol..(details.add + details.modify + details.delete + (details.rename or 0)).." "
     end
     if (details.untracked or 0) > 0 then
-        text = text..plc_git_untrackedcountSymbol..details.untracked.." "
+        text = text..plc_git.untrackedcountSymbol..details.untracked.." "
     end
     return text
 end
@@ -227,13 +245,13 @@ local function init()
     local textColor = plc_git.clean_textColor
     local fillColor = plc_git.clean_fillColor
     if not plc_simple then
-        text = " "..plc_git_branchSymbol..text
+        text = " "..plc_versionControl.branchSymbol..text
     end
     if gitConflict then
         textColor = plc_git.conflict_textColor
         fillColor = plc_git.conflict_fillColor
-        if plc_git_conflictSymbol and #plc_git_conflictSymbol then
-            text = text..plc_git_conflictSymbol.." "
+        if plc_git.conflictSymbol and #plc_git.conflictSymbol then
+            text = text..plc_git.conflictSymbol.." "
         end
     elseif gitStatus and gitStatus.working then
         textColor = plc_git.dirty_textColor
@@ -246,14 +264,14 @@ local function init()
     plc.addSegment(text, textColor, fillColor)
 
     -- Staged status
-	local showStaged = plc_git_staged
-	if showStaged == nil then
-		showStaged = true
-	end
+    local showStaged = plc_git.staged
+    if showStaged == nil then
+        showStaged = true
+    end
     if showStaged and gitStatus and gitStatus.staged then
         text = " "
-        if plc_git_stagedSymbol and #plc_git_stagedSymbol then
-            text = text..plc_git_stagedSymbol.." "
+        if plc_git.stagedSymbol and #plc_git.stagedSymbol then
+            text = text..plc_git.stagedSymbol.." "
         end
         textColor = plc_git.staged_textColor
         fillColor = plc_git.staged_fillColor
@@ -262,21 +280,21 @@ local function init()
     end
 
     -- Remote status (ahead/behind)
-    if plc_git_aheadbehind then
+    if plc_git.aheadbehind then
         local ahead = info.ahead or "0"
         local behind = info.behind or "0"
         if ahead ~= "0" or behind ~= "0" then
             text = " "
-            if plc_git_aheadbehindSymbol and #plc_git_aheadbehindSymbol > 0 then
-                text = text..plc_git_aheadbehindSymbol.." "
+            if plc_git.aheadbehindSymbol and #plc_git.aheadbehindSymbol > 0 then
+                text = text..plc_git.aheadbehindSymbol.." "
             end
             textColor = plc_git.remote_textColor
             fillColor = plc_git.remote_fillColor
             if ahead ~= "0" then
-                text = text..plc_git_aheadcountSymbol..ahead.." "
+                text = text..plc_git.aheadcountSymbol..ahead.." "
             end
             if behind ~= "0" then
-                text = text..plc_git_behindcountSymbol..behind.." "
+                text = text..plc_git.behindcountSymbol..behind.." "
             end
             plc.addSegment(text, textColor, fillColor)
         end
@@ -286,4 +304,4 @@ end
 ---
 -- Register this addon with Clink
 ---
-plc.add_module(init, plc_versionControl)
+plc.addModule(init, plc_versionControl)

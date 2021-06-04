@@ -30,8 +30,8 @@ local function init()
     end
 
     local text
-    if plc_npm_npmSymbol then
-      text = " "..plc_npm_npmSymbol.." "..package_name.."@"..package_version.." "
+    if plc_npm.npmSymbol then
+      text = " "..plc_npm.npmSymbol.." "..package_name.."@"..package_version.." "
     else
       text = " "..package_name.."@"..package_version.." "
     end
@@ -43,4 +43,4 @@ end
 ---
 -- Register this addon with Clink
 ---
-plc.add_module(init, plc_npm)
+plc.addModule(init, plc_npm)

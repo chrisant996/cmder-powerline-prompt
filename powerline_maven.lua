@@ -55,8 +55,9 @@ local function init()
     end
 
     local text
-    if plc_mvn_mvnSymbol then
-      text = " "..plc_mvn_mvnSymbol.." "..package_group..":"..package_artifact..":"..package_version.." "
+    if plc_maven.mavenSymbol then
+      text = " "..plc_maven.mavenSymbol
+      .." "..package_group..":"..package_artifact..":"..package_version.." "
     else
       text = " mvn: "..package_group..":"..package_artifact..":"..package_version.." "
     end
@@ -67,4 +68,4 @@ end
 ---
 -- Register this addon with Clink
 ---
-plc.add_module(init, plc_maven)
+plc.addModule(init, plc_maven)
