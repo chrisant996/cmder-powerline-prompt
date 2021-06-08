@@ -1,14 +1,27 @@
 plc_date = {}
-plc_date.priority = plc_priority_start + 2
-plc_date.allow_refresh = false          -- false keeps the date/time from changing until the next input line.
-plc_date.position = "normal"            -- Position:  "normal", "above", "below", or "right".
-plc_date.format = nil                   -- nil auto-selects date format based on plc_date.position.
 
-plc_date.textColor = colorBlack
-plc_date.fillColor = colorBrightBlack
+local function init_config()
+    plc_date.priority = plc_date.priority or plc_priority_date or (plc_priority_start + 2)
 
-plc_date.above_textColor = colorDefault
-plc_date.above_fillColor = colorDefault
+    -- Colors.
+    plc_date.textColor = plc_date.textColor or plc_date_textColor or colorBlack
+    plc_date.fillColor = plc_date.fillColor or plc_date_fillColor or colorBrightBlack
+    plc_date.above_textColor = plc_date.above_textColor or plc_date_above_textColor or colorDefault
+    plc_date.above_fillColor = plc_date.above_fillColor or plc_date_above_fillColor or colorDefault
+
+    -- false keeps the date/time from changing until the next input line.
+    plc_date.allow_refresh = plc.bool_config(plc_date.allow_refresh, false)
+
+    -- Position for date segment:
+    --      "normal"    Left justified segment.
+    --      "right"     Right justified segment.
+    --      "above"     Separate text above the powerline prompt.
+    --      nil         Don't show the date (the default).
+    plc_date.position = plc_date.position or plc_date_position or nil
+
+    -- Date format.  Nil auto-selects date format based on plc_date.position.
+    plc_date.format = plc_date.format or plc_date_format or nil
+end
 
 local function plc_colorize_date_above(prompt)
     return plc.addTextWithColor("", prompt, plc_date.above_textColor, plc_date.above_fillColor)
@@ -63,4 +76,5 @@ local function init()
     end
 end
 
+plc_date.init = init_config
 plc.addModule(init, plc_date)

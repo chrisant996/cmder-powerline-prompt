@@ -1,14 +1,19 @@
 plc_versionControl = plc_versionControl or {}
-plc_versionControl.priority = plc_versionControl.priority or 61
-plc_versionControl.branchSymbol = plc_versionControl.branchSymbol or ""
-
 plc_hg = {}
-plc_hg.branch_textColor = colorBlack
-plc_hg.branch_fillColor = colorGreen
-plc_hg.dirty_textColor = colorWhite
-plc_hg.dirty_fillColor = colorRed
 
-plc_hg.changesSymbol = "*"              -- Symbol to indicate changes exist.
+local function init_config()
+    plc_hg.priority = plc_hg.priority or plc_versionControl.priority or plc_priority_versionControl or 61
+
+    -- Colors.
+    plc_hg.branch_textColor = plc_hg.branch_textColor or plc_hg_branch_textColor or colorBlack
+    plc_hg.branch_fillColor = plc_hg.branch_fillColor or plc_hg_branch_fillColor or colorGreen
+    plc_hg.dirty_textColor = plc_hg.dirty_textColor or plc_hg_dirty_textColor or colorWhite
+    plc_hg.dirty_fillColor = plc_hg.dirty_fillColor or plc_hg_dirty_fillColor or colorRed
+
+    -- Symbols.
+    plc_hg.branchSymbol = plc_hg.branchSymbol or plc_versionControl.branchSymbol or plc_git_branchSymbol or ""
+    plc_hg.changesSymbol = plc_hg.changesSymbol or plc_hg_changesSymbol or "*"
+end
 
 --- Copied from clink.lua in %CMDER_ROOT%\vendor.
  -- Resolves closest directory location for specified directory.
@@ -77,7 +82,7 @@ local function init()
             -- Branch segment
             local text = " " .. branch .. " "
             if not plc_simple then
-                text = " " .. plc_versionControl.branchSymbol .. text
+                text = " " .. plc_hg.branchSymbol .. text
             end
             plc.addSegment(text, plc_hg.branch_textColor, plc_hg.branch_fillColor)
 
@@ -95,4 +100,5 @@ end
 ---
 -- Register this addon with Clink
 ---
-plc.addModule(init, plc_versionControl)
+plc_hg.init = init_config
+plc.addModule(init, plc_hg)

@@ -1,13 +1,24 @@
 plc_prompt = plc_prompt or {}
-plc_prompt.priority = plc_prompt.priority or 55
-plc_prompt.textColor = colorWhite
-plc_prompt.fillColor = colorBlue
-plc_prompt.useHomeSymbol = true -- Display plc_prompt.homeSymbol instead of user's home folder (e.g. C:\Users\username).
-plc_prompt.homeSymbol = "~"     -- Symbol to display instead of user's home folder.
-plc_prompt.type = "smart"       -- "full" = C:\Windows\System32
-                                -- "folder" = System32
-                                -- "smart" = Full path outside git repo, or
-                                --           repo-relative path inside git repo.
+
+local function init_config()
+    -- Priority for segment.
+    plc_prompt.priority = plc_prompt.priority or plc_prompt_priority or 55
+
+    -- Colors for segment.
+    plc_prompt.textColor = plc_prompt.textColor or plc_prompt_textColor or colorWhite
+    plc_prompt.fillColor = plc_prompt.fillColor or plc_prompt_fillColor or colorBlue
+
+    -- Display plc_prompt.homeSymbol instead of user's home folder (e.g. C:\Users\username).
+    plc_prompt.useHomeSymbol = plc.bool_config(plc_prompt.useHomeSymbol, plc_prompt_useHomeSymbol, true)
+    plc_prompt.homeSymbol = plc_prompt.homeSymbol or plc_prompt_homeSymbol or "~"
+
+    -- Prompt type:
+    --      "full"      = C:\Windows\System32
+    --      "folder"    = System32
+    --      "smart"     = Full path outside git repo, or
+    --                    repo-relative path inside git repo.
+    plc_prompt.type = plc_prompt.type or plc_prompt_type or "smart"
+end
 
 -- Extracts only the folder name from the input Path
 -- Ex: Input C:\Windows\System32 returns System32
@@ -90,4 +101,5 @@ end
 ---
 -- Register this addon with Clink
 ---
+plc_prompt.init = init_config
 plc.addModule(init, plc_prompt)

@@ -1,7 +1,15 @@
 plc_maven = {}
-plc_maven.priority = 60
-plc_maven.textColor = colorWhite
-plc_maven.fillColor = colorCyan
+
+local function init_config()
+  plc_maven.priority = plc_maven.priority or 60
+
+  -- Colors.
+  plc_maven.textColor = plc_maven.textColor or colorWhite
+  plc_maven.fillColor = plc_maven.fillColor or colorCyan
+
+  -- Symbols.
+  plc_maven.mavenSymbol = plc_maven.mavenSymbol or plc_mvn_mvnSymbol
+end
 
 local function get_pom_xml_dir(path)
   if not path or path == '.' then path = clink.get_cwd() end
@@ -68,4 +76,5 @@ end
 ---
 -- Register this addon with Clink
 ---
+plc_maven.init = init_config
 plc.addModule(init, plc_maven)

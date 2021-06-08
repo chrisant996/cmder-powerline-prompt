@@ -1,10 +1,20 @@
 plc_battery = {}
-plc_battery.priority = plc_priority_start + 1
-plc_battery.idle_refresh = true
-plc_battery.refresh_interval = 15
 
-plc_battery.levelSymbol = "%"
-plc_battery.chargingSymbol = "⚡"
+local function init_config()
+    plc_battery.priority = plc_battery.priority or plc_priority_battery or (plc_priority_start + 1)
+
+    -- Options.
+    plc_battery.withDate = plc.bool_config(plc_battery.withDate, plc_battery_withDate, false)
+    plc_battery.showLevel = plc_battery.showLevel or plc_battery_showLevel
+    plc_battery.lowLevel = plc_battery.lowLevel or plc_battery_lowLevel
+    plc_battery.mediumLevel = plc_battery.mediumLevel or plc_battery_mediumLevel
+    plc_battery.idle_refresh = (plc_battery.idle_refresh or plc_battery.idle_refresh == nil) -- Default is true.
+    plc_battery.refresh_interval = plc_battery.refresh_interval or 15
+
+    -- Symbols.
+    plc_battery.levelSymbol = plc_battery.levelSymbol or plc_battery_levelSymbol or "%"
+    plc_battery.chargingSymbol = plc_battery.chargingSymbol or plc_battery_chargingSymbol or "⚡"
+end
 
 ---
 -- Also called from powerline_date.lua
@@ -162,4 +172,5 @@ end
 ---
 -- Register this addon with Clink
 ---
+plc_battery.init = init_config
 plc.addModule(init, plc_battery)

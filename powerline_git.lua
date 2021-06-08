@@ -1,35 +1,42 @@
 plc_versionControl = plc_versionControl or {}
-plc_versionControl.priority = plc_versionControl.priority or 61
-plc_versionControl.branchSymbol = plc_versionControl.branchSymbol or ""
-
 plc_git = {}
-plc_git.unknown_textColor = colorBlack
-plc_git.unknown_fillColor = colorWhite
-plc_git.clean_textColor = colorBlack
-plc_git.clean_fillColor = colorGreen
-plc_git.dirty_textColor = colorBlack
-plc_git.dirty_fillColor = colorYellow
-plc_git.conflict_textColor = colorBrightWhite
-plc_git.conflict_fillColor = colorRed
-plc_git.staged_textColor = colorBlack
-plc_git.staged_fillColor = colorMagenta
-plc_git.remote_textColor = colorBlack
-plc_git.remote_fillColor = colorCyan
 
-plc_git.conflictSymbol = "!"
+local function init_config()
+    plc_git.priority = plc_git.priority or plc_versionControl.priority or plc_priority_versionControl or 61
 
-plc_git.addcountSymbol = "+"
-plc_git.modifycountSymbol = "*"
-plc_git.deletecountSymbol = "-"
-plc_git.renamecountSymbol = ""          -- Empty string counts renamed as modified.
-plc_git.summarycountSymbol = "±"
-plc_git.untrackedcountSymbol = "?"
+    -- Colors.
+    plc_git.unknown_textColor = plc_git.unknown_textColor or colorBlack
+    plc_git.unknown_fillColor = plc_git.unknown_fillColor or colorWhite
+    plc_git.clean_textColor = plc_git.clean_textColor or plc_git_clean_textColor or colorBlack
+    plc_git.clean_fillColor = plc_git.clean_fillColor or plc_git_clean_fillColor or colorGreen
+    plc_git.dirty_textColor = plc_git.dirty_textColor or plc_git_dirty_textColor or colorBlack
+    plc_git.dirty_fillColor = plc_git.dirty_fillColor or plc_git_dirty_fillColor or colorYellow
+    plc_git.conflict_textColor = plc_git.conflict_textColor or plc_git_conflict_textColor or colorBrightWhite
+    plc_git.conflict_fillColor = plc_git.conflict_fillColor or plc_git_conflict_fillColor or colorRed
+    plc_git.staged_textColor = plc_git.staged_textColor or plc_git_staged_textColor or colorBlack
+    plc_git.staged_fillColor = plc_git.staged_fillColor or plc_git_staged_fillColor or colorMagenta
+    plc_git.remote_textColor = plc_git.remote_textColor or plc_git_remote_textColor or colorBlack
+    plc_git.remote_fillColor = plc_git.remote_fillColor or plc_git_remote_fillColor or colorCyan
 
-plc_git.aheadbehindSymbol = ""          -- Optional symbol preceding the ahead/behind counts.
-plc_git.aheadcountSymbol = "↓"
-plc_git.behindcountSymbol = "↑"
+    -- Options.
+    plc_git.status_details = plc.bool_config(plc_git.status_details, plc_git_status_details, false)
+    plc_git.staged = plc.bool_config(plc_git.staged, plc_git_staged, true)
+    plc_git.aheadbehind = plc.bool_config(plc_git.aheadbehind, plc_git_aheadbehind, false)
 
-plc_git.stagedSymbol = "↗"
+    -- Symbols.
+    plc_git.branchSymbol = plc_git.branchSymbol or plc_versionControl.branchSymbol or plc_git_branchSymbol or ""
+    plc_git.conflictSymbol = plc_git.conflictSymbol or plc_git_conflictSymbol or "!"
+    plc_git.addcountSymbol = plc_git.addcountSymbol or plc_git_addcountSymbol or "+"
+    plc_git.modifycountSymbol = plc_git.modifycountSymbol or plc_git_modifycountSymbol or "*"
+    plc_git.deletecountSymbol = plc_git.deletecountSymbol or plc_git_deletecountSymbol or "-"
+    plc_git.renamecountSymbol = plc_git.renamecountSymbol or plc_git_renamecountSymbol or "" -- Empty string counts renamed as modified.
+    plc_git.summarycountSymbol = plc_git.summarycountSymbol or plc_git_summarycountSymbol or "±"
+    plc_git.untrackedcountSymbol = plc_git.untrackedcountSymbol or plc_git_untrackedcountSymbol or "?"
+    plc_git.aheadbehindSymbol = plc_git.aheadbehindSymbol or plc_git_aheadbehindSymbol or "" -- Optional symbol preceding the ahead/behind counts.
+    plc_git.aheadcountSymbol = plc_git.aheadcountSymbol or plc_git_aheadcountSymbol or "↓"
+    plc_git.behindcountSymbol = plc_git.behindcountSymbol or plc_git_behindcountSymbol or "↑"
+    plc_git.stagedSymbol = plc_git.stagedSymbol or plc_git_stagedSymbol or "↗"
+end
 
 ---
 -- Support async prompt filtering when available.
@@ -245,7 +252,7 @@ local function init()
     local textColor = plc_git.clean_textColor
     local fillColor = plc_git.clean_fillColor
     if not plc_simple then
-        text = " "..plc_versionControl.branchSymbol..text
+        text = " "..plc_git.branchSymbol..text
     end
     if gitConflict then
         textColor = plc_git.conflict_textColor
@@ -304,4 +311,5 @@ end
 ---
 -- Register this addon with Clink
 ---
-plc.addModule(init, plc_versionControl)
+plc_git.init = init_config
+plc.addModule(init, plc_git)

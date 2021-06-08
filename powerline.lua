@@ -165,15 +165,18 @@ colorDefault = {
 -- Configurable Symbols
 -- Override these in the config file, if needed.
 
-newLineSymbol = ansiEscChar.."[m\n" -- ESC[m is needed when colour.input is set
-
-plc_prompt.leftJustSegmentSymbol = ""     -- Symbol connecting left-justified segments.
-plc_prompt.rightJustSegmentSymbol = ""    -- Symbol connecting right-justified segments.
-plc_prompt.leftJustDividerSymbol = ""     -- Symbol dividing same-color left-justified segments.
-plc_prompt.rightJustDividerSymbol = ""    -- Symbol dividing same-color right-justified segments.
-plc_prompt.lambSymbol = "λ"                -- Symbol displayed in the new line below the prompt.
-plc_prompt.lambTextColor = ansiFgBold   -- ANSI color SGR parameters for text color for plc_prompt.lambSymbol.
-plc_prompt.lambFillColor = ansiBgClrDefault -- ANSI color SGR parameters for fill color for plc_prompt.lambSymbol.
+local function init_config()
+    newLineSymbol = ansiEscChar.."[m"..(newLineSymbol and newLineSymbol..ansiEscChar.."[m" or "\n") -- ESC[m is needed when colour.input is set
+    plc_prompt.leftJustSegmentSymbol = plc_prompt.leftJustSegmentSymbol or plc_prompt_arrowSymbol or "" -- Symbol connecting left-justified segments.
+    plc_prompt.rightJustSegmentSymbol = plc_prompt.rightJustSegmentSymbol or "" -- Symbol connecting right-justified segments.
+    plc_prompt.leftJustDividerSymbol = plc_prompt.leftJustDividerSymbol or "" -- Symbol dividing same-color left-justified segments.
+    plc_prompt.rightJustDividerSymbol = plc_prompt.rightJustDividerSymbol or "" -- Symbol dividing same-color right-justified segments.
+    plc_prompt.useLambSymbol = plc_prompt.useLambSymbol or plc_prompt_useLambSymbol or false -- Whether to add plc_prompt.lambSymbol on a new line under the prompt.
+    plc_prompt.lambSymbol = plc_prompt.lambSymbol or plc_prompt_lambSymbol or "λ" -- Symbol displayed in the new line below the prompt.
+    plc_prompt.lambTextColor = plc_prompt.lambTextColor or ansiFgBold -- ANSI color SGR parameters for text color for plc_prompt.lambSymbol.
+    plc_prompt.lambFillColor = plc_prompt.lambFillColor or ansiBgClrDefault -- ANSI color SGR parameters for fill color for plc_prompt.lambSymbol.
+    plc_prompt.simpleClose = plc_prompt.simpleClose or ">" -- Symbol for end of simple prompt.
+end
 
 
 ------------------------------------------------------------------------------
@@ -198,6 +201,15 @@ function plc.bookend_priority(prio)
     end
 end
 bookend_priority = plc.bookend_priority -- backward compatibility
+
+function plc.bool_config(primary, secondary, default)
+    if primary ~= nil then
+        return primary
+    elseif secondary ~= nil then
+        return secondary
+    end
+    return default
+end
 
 ---
 -- Adds an arrow symbol to the input text with the correct colors
@@ -420,14 +432,14 @@ end
 ---
 plc._install = {}
 function plc.addModule(func, defaults)
-    if not defaults or not defaults.priority then
-        error("Missing priority field.", 2)
-    end
-    table.insert(plc._install, { func=func, defaults=defaults })
+    local caller = debug.getinfo(2, "lS")
+    table.insert(plc._install, { func=func, defaults=defaults, caller=caller })
 end
 
 -- Register filters for resetting the prompt and closing it before and after all addons
 if (clink.version_encoded or 0) >= 10020005 then
+
+    local inited_config = false
 
     resetPrompt = clink.promptfilter(plc_priority_start)
     closePrompt = clink.promptfilter(plc_priority_finish)
@@ -475,9 +487,21 @@ if (clink.version_encoded or 0) >= 10020005 then
     end
 
     local function install_segments()
+        if not inited_config then
+            init_config()
+            inited_config = true
+        end
         for _,def in ipairs(plc._install) do
+            if def.defaults and type(def.defaults.init) == "function" then
+                def.defaults.init()
+            end
+
             local func = def.func
             local defaults = def.defaults
+            if not defaults or not defaults.priority then
+                print("undefined priority ("..def.caller.short_src..":"..def.caller.currentline..")")
+            end
+
             local prio = plc.bookend_priority(defaults and defaults.priority or 999999)
             local seg = clink.promptfilter(prio)
             function seg:filter(prompt)

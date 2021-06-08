@@ -1,7 +1,15 @@
 plc_npm = {}
-plc_npm.priority = 60
-plc_npm.textColor = colorWhite
-plc_npm.fillColor = colorCyan
+
+local function init_config()
+  plc_npm.priority = plc_npm.priority or plc_priority_npm or 60
+
+  -- Colors.
+  plc_npm.textColor = plc_npm.textColor or plc_npm_textColor or colorWhite
+  plc_npm.fillColor = plc_npm.fillColor or plc_npm_fillColor or colorCyan
+
+  -- Symbols.
+  plc_npm.npmSymbol = plc_npm.npmSymbol or plc_npm_npmSymbol or nil
+end
 
 local function get_package_json_file(path)
   if not path or path == '.' then path = clink.get_cwd() end
@@ -43,4 +51,5 @@ end
 ---
 -- Register this addon with Clink
 ---
+plc_npm.init = init_config
 plc.addModule(init, plc_npm)

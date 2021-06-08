@@ -1,7 +1,19 @@
 plc_python = {}
-plc_python.priority = 60
-plc_python.textColor = colorWhite
-plc_python.fillColor = colorCyan
+
+local function init_config()
+    plc_python.priority = plc_python.priority or 60
+
+    -- Colors.
+    plc_python.textColor = plc_python.textColor or plc_python_textColor or colorWhite
+    plc_python.fillColor = plc_python.fillColor or plc_python_fillColor or colorCyan
+
+    -- Options.
+    plc_python.virtualEnvVariable = plc_python.virtualEnvVariable or plc_python_virtualEnvVariable or nil
+    plc_python.alwaysShow = plc.bool_config(plc_python.alwaysShow, plc_python_alwaysShow, false)
+
+    -- Symbols.
+    plc_python.pythonSymbol = plc_python.pythonSymbol or plc_python_pythonSymbol or nil
+end
 
 ---
  -- get the virtual env variable
@@ -74,4 +86,5 @@ end
 ---
 -- Register this addon with Clink
 ---
+plc_python.init = init_config
 plc.addModule(init, plc_python)
