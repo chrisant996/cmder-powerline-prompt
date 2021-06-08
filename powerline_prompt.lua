@@ -18,6 +18,9 @@ local function init_config()
     --      "smart"     = Full path outside git repo, or
     --                    repo-relative path inside git repo.
     plc_prompt.type = plc_prompt.type or plc_prompt_type or "smart"
+
+    -- Symbol for git path when plc_prompt.type is "smart".
+    plc_prompt.gitSymbol = plc_prompt.gitSymbol or plc_prompt_gitSymbol or nil
 end
 
 -- Extracts only the folder name from the input Path
@@ -78,7 +81,7 @@ local function init()
                     local git_root_dir = plc.toParent(git_dir)
                     local appended_dir = string.sub(cwd, string.len(git_root_dir) + 1)
                     cwd = get_folder_name(git_root_dir)..appended_dir
-                    if plc_prompt.gitSymbol then
+                    if plc_prompt.gitSymbol and plc_prompt.gitSymbol ~= "" then
                         cwd = plc_prompt.gitSymbol.." "..cwd
                     end
                 end

@@ -73,11 +73,9 @@ local function init()
         return
     end
 
-    local text
-    if plc_python.pythonSymbol then
-        text = " "..plc_python.pythonSymbol.." ["..venv.."] "
-    else
-        text = " ["..venv.."] "
+    local text = " ["..venv.."] "
+    if plc_python.pythonSymbol and plc_python.pythonSymbol ~= "" then
+        text = " "..plc_python.pythonSymbol..text
     end
 
     plc.addSegment(text, plc_python.textColor, plc_python.fillColor)

@@ -37,11 +37,9 @@ local function init()
       package_version = ''
     end
 
-    local text
-    if plc_npm.npmSymbol then
-      text = " "..plc_npm.npmSymbol.." "..package_name.."@"..package_version.." "
-    else
-      text = " "..package_name.."@"..package_version.." "
+    local text = " "..package_name.."@"..package_version.." "
+    if plc_npm.npmSymbol and plc_npm.npmSymbol ~= "" then
+      text = " "..plc_npm.npmSymbol..text
     end
 
     plc.addSegment(text, plc_npm.textColor, plc_npm.fillColor)

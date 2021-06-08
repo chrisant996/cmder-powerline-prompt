@@ -8,7 +8,7 @@ local function init_config()
   plc_maven.fillColor = plc_maven.fillColor or colorCyan
 
   -- Symbols.
-  plc_maven.mavenSymbol = plc_maven.mavenSymbol or plc_mvn_mvnSymbol
+  plc_maven.mavenSymbol = plc_maven.mavenSymbol or plc_mvn_mvnSymbol or "mvn:"
 end
 
 local function get_pom_xml_dir(path)
@@ -62,12 +62,9 @@ local function init()
       end
     end
 
-    local text
-    if plc_maven.mavenSymbol then
-      text = " "..plc_maven.mavenSymbol
-      .." "..package_group..":"..package_artifact..":"..package_version.." "
-    else
-      text = " mvn: "..package_group..":"..package_artifact..":"..package_version.." "
+    local text = " "..package_group..":"..package_artifact..":"..package_version.." "
+    if plc_maven.mavenSymbol and plc_maven.mavenSymbol ~= "" then
+      text = " "..plc_maven.mavenSymbol..text
     end
     plc.addSegment(text, plc_maven.textColor, plc_maven.fillColor)
   end
