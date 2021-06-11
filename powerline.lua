@@ -188,6 +188,13 @@ plc_priority_finish = 99
 
 
 ------------------------------------------------------------------------------
+-- Disable the Cmder prompt's version control status, since it's expensive and
+-- we supersede it with our own prompt text.
+if CMDER_SESSION then
+    prompt_includeVersionControl = false
+end
+
+------------------------------------------------------------------------------
 -- Functions
 
 plc = plc or {}
