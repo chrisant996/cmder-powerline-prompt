@@ -159,6 +159,22 @@
 
 
 ------------------------------------------------------------------------------
+-- ERRORLEVEL module
+
+---- Whether to always the last exit code, even when it's 0.
+---- Default is false.
+--plc_errorlevel.showAlways = false
+
+---- Colors for the exit code segment.
+--plc_errorlevel.textColor = colorBrightRed
+--plc_errorlevel.fillColor = colorBlack
+
+---- Symbol for the exit code.
+---- Default is "exit".
+--plc_errorlevel.symbol = "exit"
+
+
+------------------------------------------------------------------------------
 -- GIT module
 
 ---- Whether to show detailed operation counts in the git prompt.
