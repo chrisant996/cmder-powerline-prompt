@@ -160,10 +160,18 @@
 
 ------------------------------------------------------------------------------
 -- ERRORLEVEL module
+--
+-- NOTE:  This module only works on Clink v1.2.14 and higher, and only when
+--        Clink's `cmd.get_errorlevel` setting is enabled (it's disabled by
+--        default).
 
 ---- Whether to always the last exit code, even when it's 0.
 ---- Default is false.
 --plc_errorlevel.showAlways = false
+
+---- Show exit code in hex when the absolute value is greater than 255.
+---- Default is false.
+--plc_errorlevel.showHexOver255 = false
 
 ---- Colors for the exit code segment.
 --plc_errorlevel.textColor = colorBrightRed

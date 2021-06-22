@@ -1,3 +1,7 @@
+-- NOTE:  This module only works on Clink v1.2.14 and higher, and only when
+--        Clink's `cmd.get_errorlevel` setting is enabled (it's disabled by
+--        default).
+
 plc_errorlevel = {}
 
 local function init_config()
@@ -9,6 +13,7 @@ local function init_config()
 
     -- Options.
     plc_errorlevel.showAlways = plc.bool_config(plc_errorlevel.showAlways, false)
+    plc_errorlevel.showHexOver255 = plc.bool_config(plc_errorlevel.showHexOver255, false)
 
     -- Symbols.
     plc_errorlevel.symbol = plc_errorlevel.symbol or "exit"
@@ -23,7 +28,20 @@ local function init()
         return
     end
 
-    local text = " "..value.." "
+    local text
+    if plc_errorlevel.showHexOver255 and math.abs(value) > 255 then
+        local lo = bit32.band(value, 0xffff)
+        local hi = bit32.rshift(value, 16)
+        local hex
+        if hi > 0 then
+            hex = string.format("%x", hi)..string.format("%04.4x", lo)
+        else
+            hex = string.format("%x", lo)
+        end
+        text = " 0x"..hex.." "
+    else
+        text = " "..value.." "
+    end
     if plc_errorlevel.symbol and plc_errorlevel.symbol ~= "" then
         text = " "..plc_errorlevel.symbol..text
     end
