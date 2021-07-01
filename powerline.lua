@@ -261,8 +261,8 @@ addArrow = plc.addArrow -- backward compatibility
 -- @return {string} concatination of the the two input text with the correct color formatting.
 ---
 function plc.addTextWithColor(text, textToAdd, textColor, fillColor)
-    local textColorValue = plc_simple and fillColor.foreground or textColor.foreground
-    local fillColorValue = plc_simple and colorDefault.background or fillColor.background
+    local textColorValue = plc_simple and fillColor.foreground ~= colorBlack and fillColor.foreground or textColor.foreground
+    local fillColorValue = plc_simple and fillColor.foreground ~= colorBlack and colorDefault.background or fillColor.background
     return text..ansiEscChar.."[0;"..textColorValue..";"..fillColorValue.."m"..textToAdd..ansiEscChar.."[0m"
 end
 addTextWithColor = plc.addTextWithColor -- backward compatibility
