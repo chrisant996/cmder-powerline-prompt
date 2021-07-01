@@ -234,10 +234,11 @@ function plc.addArrow(text, oldColor, newColor, right)
     if plc_simple then
         text = plc.addTextWithColor(text, "  ", colorDefault, colorDefault)
     elseif oldColor.background == newColor.background then
+        local divColor = (oldColor.background == colorBlack.background) and colorBrightBlack or colorBlack
         if right then
-            text = plc.addTextWithColor(text, plc_prompt.rightJustDividerSymbol, colorBlack, oldColor)
+            text = plc.addTextWithColor(text, plc_prompt.rightJustDividerSymbol, divColor, oldColor)
         else
-            text = plc.addTextWithColor(text, plc_prompt.leftJustDividerSymbol, colorBlack, newColor)
+            text = plc.addTextWithColor(text, plc_prompt.leftJustDividerSymbol, divColor, newColor)
         end
     else
         if right then
